@@ -1,4 +1,4 @@
-package test.acceptance;
+package acceptance;
 
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
