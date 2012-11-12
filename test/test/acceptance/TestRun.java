@@ -12,5 +12,6 @@ public class TestRun {
 
     @Test
     public void TestRunWithNoCalls() throws Exception {
+        System.out.println("making conflict");
     }
 }
