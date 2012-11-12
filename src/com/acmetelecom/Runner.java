@@ -2,7 +2,7 @@ package com.acmetelecom;
 
 public class Runner {
     public static void main(String[] args) throws Exception {
-        System.out.println("Running...Douglas' face");
+        System.out.println("Running...");
         BillingSystem billingSystem = new BillingSystem();
         billingSystem.callInitiated("447722113434", "447766511332");
         sleepSeconds(20);
