@@ -10,13 +10,12 @@ import java.util.List;
 import static junit.framework.Assert.assertEquals;
 
 public class TestBillGenerator implements IBillGenerator {
-    List<TestBill> bills = new ArrayList<TestBill>();
+    private List<TestBill> bills = new ArrayList<TestBill>();
 
 	@Override
-	public void send(Customer customer, List<BillingSystem.LineItem> calls, String totalBill) {
+    public void send(Customer customer, List<BillingSystem.LineItem> calls, String totalBill) {
         bills.add(new TestBill(customer, calls, totalBill));
 	}
-
 
     public TestBillGenerator expectEmptyBills() {
         return expectNumberOfCalls(0);

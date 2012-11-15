@@ -11,6 +11,15 @@ public class TestCallEvent {
     private long startTime;
     private long finishTime;
 
+    public TestCallEvent(TelecomTestContext context, long start){
+        this.parent = context;
+        this.startTime = start;
+    }
+
+    public static TestCallEvent newCall(TelecomTestContext context, long start) {
+        return new TestCallEvent(context, start);
+    }
+
     public String getCaller() {
         return caller;
     }
@@ -27,15 +36,6 @@ public class TestCallEvent {
         return finishTime;
     }
 
-    public TestCallEvent(TelecomTestContext context, long start){
-        this.parent = context;
-        this.startTime = start;
-    }
-
-    public static TestCallEvent newCall(TelecomTestContext context, long start) {
-        return new TestCallEvent(context, start);
-    }
-
     public TestCallEvent from(String caller){
         this.caller = caller;
         return this;
@@ -48,7 +48,7 @@ public class TestCallEvent {
 
     public TelecomTestContext forSeconds(int seconds) {
         this.finishTime = startTime + (seconds * 1000);
-        return this.parent.addCallRecord(this);
+        return this.parent.addToCallLog(this);
     }
 
     public TelecomTestContext forMinutes(int minutes) {

@@ -17,7 +17,7 @@ public class TelecomTestContext {
         return TestCallEvent.newCall(this, start);
 	}
 
-    public TelecomTestContext addCallRecord(TestCallEvent testCallEvent) {
+    public TelecomTestContext addToCallLog(TestCallEvent testCallEvent) {
         DateTimeUtils.setCurrentMillisFixed(testCallEvent.getStartTime());
         billingSystem.callInitiated(testCallEvent.getCaller(), testCallEvent.getCallee());
         DateTimeUtils.setCurrentMillisFixed(testCallEvent.getFinishTime());

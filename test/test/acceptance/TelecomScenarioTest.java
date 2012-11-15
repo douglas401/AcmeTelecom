@@ -20,7 +20,6 @@ public class TelecomScenarioTest {
                 .to("447766511332")
                 .forSeconds(20)
                 .generateBills()
-                .expectNumberOfCalls(1)
                 .expectNumberOfBills(1);
     }
 }
