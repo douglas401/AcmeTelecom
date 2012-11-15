@@ -12,6 +12,11 @@ import java.util.*;
 public class BillingSystem {
 
     private List<CallEvent> callLog = new ArrayList<CallEvent>();
+    private IBillGenerator billGenerator;
+
+    public BillingSystem(IBillGenerator billGenerator) {
+        this.billGenerator = billGenerator;
+    }
 
     public void callInitiated(String caller, String callee) {
         callLog.add(new CallStart(caller, callee));
@@ -72,7 +77,7 @@ public class BillingSystem {
             items.add(new LineItem(call, callCost));
         }
 
-		new BillGenerator().send(customer, items, MoneyFormatter.penceToPounds(totalBill));
+		billGenerator.send(customer, items, MoneyFormatter.penceToPounds(totalBill));
     }
 
     public static class LineItem {
