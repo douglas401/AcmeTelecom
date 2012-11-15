@@ -46,9 +46,16 @@ public class TestCallEvent {
         return this;
     }
 
-    public TelecomTestContext forSeconds(int time) {
-        this.finishTime = startTime + (time * 1000);
+    public TelecomTestContext forSeconds(int seconds) {
+        this.finishTime = startTime + (seconds * 1000);
         return this.parent.addCallRecord(this);
     }
 
+    public TelecomTestContext forMinutes(int minutes) {
+        return forSeconds(minutes * 60);
+    }
+
+    public TelecomTestContext forHours(int hours) {
+        return forMinutes(hours * 60);
+    }
 }
