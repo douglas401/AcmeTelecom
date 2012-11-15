@@ -1,10 +1,15 @@
 package test.acceptance;
 
-public class TelecomTestContext {
-	TestBillingSystem billingSystem;
+import com.acmetelecom.BillingSystem;
+import org.joda.time.DateTimeUtils;
 
-	public TelecomTestContext whileApplicationRuns(){
-        billingSystem = new TestBillingSystem();
+public class TelecomTestContext {
+	BillingSystem billingSystem;
+    private TestBillGenerator billGenerator;
+
+    public TelecomTestContext whileApplicationRuns(){
+        billGenerator = new TestBillGenerator();
+        billingSystem = new BillingSystem(billGenerator);
         return this;
 	}
 
@@ -13,15 +18,15 @@ public class TelecomTestContext {
 	}
 
     public TelecomTestContext addCallRecord(TestCallEvent testCallEvent) {
-        this.billingSystem.addRecord(testCallEvent);
+        DateTimeUtils.setCurrentMillisFixed(testCallEvent.getStartTime());
+        billingSystem.callInitiated(testCallEvent.getCaller(), testCallEvent.getCallee());
+        DateTimeUtils.setCurrentMillisFixed(testCallEvent.getFinishTime());
+        billingSystem.callCompleted(testCallEvent.getCaller(), testCallEvent.getCallee());
         return this;
     }
 
-    public TelecomTestContext afterGenerateBills(){
-        // Calculation for bills
-
-        return this;
+    public TestBillGenerator generateBills(){
+        billingSystem.createCustomerBills();
+        return billGenerator;
     }
-
-
 }

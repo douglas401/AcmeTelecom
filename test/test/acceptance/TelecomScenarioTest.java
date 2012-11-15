@@ -17,7 +17,7 @@ public class TelecomScenarioTest {
                 .from("447722113434")
                 .to("447766511332")
                 .forSeconds(20)
-                .afterGenerateBills();
+                .generateBills();
 
 //                .assertPhoneNumber("447722113434").getsChargedBy(4.33)
 //                .verifyTotalCallUsageInMinutes(100);
