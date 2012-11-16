@@ -1,8 +1,5 @@
 package test.acceptance;
 
-/**
- *
- */
 public class TestCallEvent {
 
     private TelecomTestContext parent;
@@ -14,10 +11,6 @@ public class TestCallEvent {
     public TestCallEvent(TelecomTestContext context, long start){
         this.parent = context;
         this.startTime = start;
-    }
-
-    public static TestCallEvent newCall(TelecomTestContext context, long start) {
-        return new TestCallEvent(context, start);
     }
 
     public String getCaller() {

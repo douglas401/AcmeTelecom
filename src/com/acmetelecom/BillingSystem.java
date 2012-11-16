@@ -65,6 +65,8 @@ public class BillingSystem {
             BigDecimal cost;
 
             DaytimePeakPeriod peakPeriod = new DaytimePeakPeriod();
+
+            // TODO: change the implementation as the new feature describes
             if (peakPeriod.offPeak(call.startTime()) && peakPeriod.offPeak(call.endTime()) && call.durationSeconds() < 12 * 60 * 60) {
                 cost = new BigDecimal(call.durationSeconds()).multiply(tariff.offPeakRate());
             } else {

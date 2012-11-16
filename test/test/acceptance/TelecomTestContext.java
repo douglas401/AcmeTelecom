@@ -14,8 +14,8 @@ public class TelecomTestContext {
 	}
 
 	public TestCallEvent newCallAt(long start){
-        return TestCallEvent.newCall(this, start);
-	}
+        return new TestCallEvent(this, start);
+    }
 
     public TelecomTestContext addToCallLog(TestCallEvent testCallEvent) {
         DateTimeUtils.setCurrentMillisFixed(testCallEvent.getStartTime());
@@ -27,6 +27,6 @@ public class TelecomTestContext {
 
     public TestBillAssert afterGeneratingBills(){
         billingSystem.createCustomerBills();
-        return TestBillAssert.startAssertion(billGenerator.getBills());
+        return new TestBillAssert(billGenerator.getBills());
     }
 }

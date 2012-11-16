@@ -16,10 +16,6 @@ public class TestBillAssert {
         this.bills = bills;
     }
 
-    public static TestBillAssert startAssertion(List<TestBill> bills) {
-        return new TestBillAssert(bills);
-    }
-
     public TestBillAssert expectNoCalls() {
         assertThat(bills, RecordNumberOfCalls(0));
         return this;
@@ -52,6 +48,4 @@ public class TestBillAssert {
             public void describeTo(Description description) { return; } // Ignore
         };
     }
-
-
 }

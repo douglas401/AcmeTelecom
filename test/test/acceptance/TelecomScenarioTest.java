@@ -5,6 +5,9 @@ import org.junit.Test;
 public class TelecomScenarioTest {
     TelecomTestContext telecom = new TelecomTestContext();
 
+    /*
+    * Simple application running check
+    * */
     @Test
     public void TestRunNoCalls() {
         telecom.whileApplicationRuns()
@@ -23,4 +26,17 @@ public class TelecomScenarioTest {
                 .expectNumberOfCalls(1)
                 .expectCallFromPhoneNumber("447722113434").getCharged();
     }
+
+    @Test
+    public void TestRunWithMultipleCalls() {
+        telecom.whileApplicationRuns()
+                // Add call information
+                .afterGeneratingBills()
+                // Add assert information
+                ;
+    }
+
+    /*
+    * Tests to determine peak/off-peak duration
+    * */
 }
