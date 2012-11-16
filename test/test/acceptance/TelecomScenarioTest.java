@@ -24,7 +24,7 @@ public class TelecomScenarioTest {
                 .forSeconds(20)
                 .afterGeneratingBills()
                 .expectNumberOfCalls(1)
-                .expectCallFromPhoneNumber("447722113434").getCharged();
+                .expectCallFromPhoneNumber("447722113434");
     }
 
     @Test
