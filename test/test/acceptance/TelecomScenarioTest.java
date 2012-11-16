@@ -8,8 +8,8 @@ public class TelecomScenarioTest {
     @Test
     public void TestRunNoCalls() {
         telecom.whileApplicationRuns()
-                .generateBills()
-                .expectNoCallsAndEmptyBills();
+                .afterGeneratingBills()
+                .expectNoCalls();
     }
 
     @Test
@@ -19,8 +19,8 @@ public class TelecomScenarioTest {
                 .from("447722113434")
                 .to("447766511332")
                 .forSeconds(20)
-                .generateBills()
-                .expectNumberOfBills(1)
+                .afterGeneratingBills()
+                .expectNumberOfCalls(1)
                 .expectCallFromPhoneNumber("447722113434").getCharged();
     }
 }

@@ -25,8 +25,8 @@ public class TelecomTestContext {
         return this;
     }
 
-    public TestBillGenerator generateBills(){
+    public TestBillAssert afterGeneratingBills(){
         billingSystem.createCustomerBills();
-        return billGenerator;
+        return TestBillAssert.startAssertion(billGenerator.getBills());
     }
 }
