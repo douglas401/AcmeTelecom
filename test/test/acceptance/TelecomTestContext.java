@@ -4,7 +4,7 @@ import com.acmetelecom.BillingSystem;
 import org.joda.time.DateTimeUtils;
 
 public class TelecomTestContext {
-	BillingSystem billingSystem;
+	private BillingSystem billingSystem;
     private TestBillGenerator billGenerator;
 
     public TelecomTestContext whileApplicationRuns(){

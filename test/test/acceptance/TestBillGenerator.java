@@ -48,6 +48,16 @@ public class TestBillGenerator implements IBillGenerator {
         return expectEmptyBills();
     }
 
+    public TestBillGenerator expectCallFromPhoneNumber(String number) {
+
+        return this;
+    }
+
+    public TestBillGenerator getCharged() {
+
+        return this;
+    }
+
     class TestBill {
         private Customer customer;
         private List<BillingSystem.LineItem> calls;
