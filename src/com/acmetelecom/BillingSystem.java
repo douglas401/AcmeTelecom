@@ -73,6 +73,16 @@ public class BillingSystem {
                 cost = new BigDecimal(call.durationSeconds()).multiply(tariff.peakRate());
             }
 
+            /*
+            * Utils.getPeakDuration(call.StartTime(),call.endTime())  = peakDuration
+            * OffPeakDuration = call.Duration - peakDuration
+            *
+            *        offpeakCost = new BigDecimal(offpeakDuration.multiply(tariff.offPeakRate());
+            *        peakCost    = new BigDecimal(peakDuration.multiply(tariff.peakRate());
+            *
+            * cost = offpeakCost + peakCost;
+            * */
+
             cost = cost.setScale(0, RoundingMode.HALF_UP);
             BigDecimal callCost = cost;
             totalBill = totalBill.add(callCost);
