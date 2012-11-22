@@ -1,3 +1,5 @@
+Acceptance test (TelecomScenarioTest)
+
 Our fluent language
 
 Lang = while expectation -> afterGeneratingBills -> verification

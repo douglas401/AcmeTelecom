@@ -30,7 +30,7 @@ public class TestBillAssert {
     public TestBillAssert expectCallFromPhoneNumber(String number) {
         boolean isBilled = false;
         for (TestBill bill : bills){
-            isBilled = isBilled || (bill.getCustomer().getPhoneNumber().equalsIgnoreCase(number));
+            isBilled |= (bill.getCustomer().getPhoneNumber().equalsIgnoreCase(number));
         }
         assertTrue(isBilled);
         return this;
