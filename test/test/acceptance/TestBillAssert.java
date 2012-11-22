@@ -21,18 +21,13 @@ public class TestBillAssert {
         return this;
     }
 
-    public TestBillAssert expectNumberOfCalls(int calls) {
+    public TestBillAssert expectTotalNumberOfCalls(int calls) {
         assertThat(bills, HasRecordedNumberOfCalls(calls));
         return this;
     }
 
-    public TestBillAssert expectCallFromPhoneNumber(String number) {
+    public TestBillAssert expectBillOnPhoneNumber(String number) {
         assertThat(bills, HasBilledForCaller(number));
-        return this;
-    }
-
-
-    public TestBillAssert getCharged() {
         return this;
     }
 

@@ -6,7 +6,7 @@ public class TelecomScenarioTest {
     TelecomTestContext telecom = new TelecomTestContext();
 
     /*
-    * Simple application running check
+    * Simple application running scenario
     * */
     @Test
     public void TestRunNoCalls() {
@@ -23,8 +23,8 @@ public class TelecomScenarioTest {
                 .to("447766511332")
                 .forSeconds(20)
                 .afterGeneratingBills()
-                .expectNumberOfCalls(1)
-                .expectCallFromPhoneNumber("447722113434");
+                .expectTotalNumberOfCalls(1)
+                .expectBillOnPhoneNumber("447722113434");
     }
 
     @Test
