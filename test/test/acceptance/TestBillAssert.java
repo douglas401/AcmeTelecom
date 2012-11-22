@@ -6,8 +6,7 @@ import org.junit.internal.matchers.TypeSafeMatcher;
 
 import java.util.List;
 
-import static org.junit.Assert.assertThat;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 public class TestBillAssert {
 
@@ -28,27 +27,27 @@ public class TestBillAssert {
     }
 
     public TestBillAssert expectCallFromPhoneNumber(String number) {
-        boolean isBilled = false;
-        for (TestBill bill : bills){
-            isBilled |= (bill.getCustomer().getPhoneNumber().equalsIgnoreCase(number));
-        }
-        assertTrue(isBilled);
+        assertThat(bills, HasBilledForCaller(number));
         return this;
     }
+
 
     public TestBillAssert getCharged() {
         return this;
     }
 
-    private Matcher<List<TestBill>> HasRecordedNamesOfCaller(final String number) {
+    private Matcher<List<TestBill>> HasBilledForCaller(final String number) {
         return new TypeSafeMatcher<List<TestBill>>() {
             @Override
             public boolean matchesSafely(List<TestBill> testBills) {
-                boolean isBilled = false;
-                for (TestBill bill : bills){
-                    isBilled = isBilled || (bill.getCustomer().getPhoneNumber().equalsIgnoreCase(number));
+                TestBill caller = null;
+                for(TestBill bill : bills){
+                    if(bill.getCustomer().getPhoneNumber().equals(number)){
+                        caller = bill;
+                    }
                 }
-                return isBilled;
+                assertNotNull(caller);
+                return caller.getCalls().size() > 0;
             }
 
             public void describeTo(Description description) { return; } // Ignore
