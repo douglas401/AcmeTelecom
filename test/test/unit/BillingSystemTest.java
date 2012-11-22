@@ -1,7 +1,6 @@
 package test.unit;
 
-import com.acmetelecom.BillGenerator;
-import com.acmetelecom.BillingSystem;
+import com.acmetelecom.*;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
 import org.junit.Test;
@@ -12,12 +11,12 @@ public class BillingSystemTest {
 
     Mockery context = new Mockery();
 
-    BillGenerator generator = context.mock(BillGenerator.class);
+    IBillGenerator generator = context.mock(IBillGenerator.class);
     BillingSystem system = new BillingSystem(generator);
 
     // TODO: Write unit tests for BillingSystem
     @Test
     public void testAnything() throws Exception {
-        // Write any unit tests with expectations and additional mockings
+        // Write any unit tests with expectations and additional mocks
     }
 }
