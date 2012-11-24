@@ -1,5 +1,6 @@
 package com.acmetelecom;
 
+import com.acmetelecom.Utils.DaytimePeakPeriod;
 import com.acmetelecom.Utils.TimeUtils;
 import com.acmetelecom.customer.CentralCustomerDatabase;
 import com.acmetelecom.customer.CentralTariffDatabase;
@@ -10,13 +11,17 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.*;
 
+import org.joda.time.DateTime;
+
 public class BillingSystem {
 
     private List<CallEvent> callLog = new ArrayList<CallEvent>();
     private IBillGenerator billGenerator;
-
+    private DaytimePeakPeriod peakPeriod;
+    
     public BillingSystem(IBillGenerator billGenerator) {
         this.billGenerator = billGenerator;
+        peakPeriod = new DaytimePeakPeriod(7, 19);
     }
 
     public void callInitiated(String caller, String callee) {
@@ -74,7 +79,7 @@ public class BillingSystem {
             *
             * cost = offpeakCost + peakCost;
             * */
-            int peakDurationSeconds = TimeUtils.getPeakDurationSeconds(call.startTime(), call.endTime());
+            int peakDurationSeconds = TimeUtils.getPeakDurationSeconds(new DateTime(call.startTime()), new DateTime(call.endTime()), peakPeriod);
             int offPeakDurationSeconds = call.durationSeconds() - peakDurationSeconds;
             cost = new BigDecimal(peakDurationSeconds).multiply(tariff.peakRate()).add(new BigDecimal(offPeakDurationSeconds).multiply(tariff.offPeakRate()));
 

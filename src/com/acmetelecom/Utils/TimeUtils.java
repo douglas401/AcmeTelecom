@@ -1,8 +1,5 @@
 package com.acmetelecom.Utils;
 
-import java.util.Calendar;
-import java.util.Date;
-
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 
@@ -14,9 +11,7 @@ public class TimeUtils {
 	 * @param endTime
 	 * @return
 	 */
-	public static int getPeakDurationSeconds(DateTime startTime, DateTime endTime) {
-		
-		DaytimePeakPeriod peakPeriod = new DaytimePeakPeriod();		
+	public static int getPeakDurationSeconds(DateTime startTime, DateTime endTime, DaytimePeakPeriod peakPeriod) {
 		int peakDurationSeconds = 0;		
 		if (peakPeriod.offPeak(startTime.toDate()) && peakPeriod.offPeak(endTime.toDate())
 				&& new Duration(startTime,endTime).getStandardHours() > peakPeriod.getPeakPeriodDuration() * 60 * 60) {
