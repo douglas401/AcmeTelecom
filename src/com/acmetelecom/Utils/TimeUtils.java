@@ -1,15 +1,11 @@
 package com.acmetelecom.Utils;
 
-import java.util.Calendar;
-import java.util.Date;
-
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 
 public class TimeUtils {
 
 	/**
-	 *  assume call duration is no longer than 24h
 	 * @param startTime
 	 * @param endTime
 	 * @return

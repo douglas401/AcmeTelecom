@@ -16,6 +16,6 @@ public class DaytimePeakPeriod {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(time);
         int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        return hour < 7 || hour >= 19;
+        return hour < PeakPeriodStart || hour >= PeakPeriodEnd;
     }
 }
