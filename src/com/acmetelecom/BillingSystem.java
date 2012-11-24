@@ -1,5 +1,6 @@
 package com.acmetelecom;
 
+import com.acmetelecom.Utils.TimeUtils;
 import com.acmetelecom.customer.CentralCustomerDatabase;
 import com.acmetelecom.customer.CentralTariffDatabase;
 import com.acmetelecom.customer.Customer;
@@ -73,7 +74,7 @@ public class BillingSystem {
             *
             * cost = offpeakCost + peakCost;
             * */
-            int peakDurationSeconds = this.getPeakDurationSeconds(call.startTime(), call.endTime());
+            int peakDurationSeconds = TimeUtils.getPeakDurationSeconds(call.startTime(), call.endTime());
             int offPeakDurationSeconds = call.durationSeconds() - peakDurationSeconds;
             cost = new BigDecimal(peakDurationSeconds).multiply(tariff.peakRate()).add(new BigDecimal(offPeakDurationSeconds).multiply(tariff.offPeakRate()));
 
@@ -85,46 +86,6 @@ public class BillingSystem {
         }
 
 		billGenerator.send(customer, items, MoneyFormatter.penceToPounds(totalBill));
-    }
-
-    private int getPeakDurationSeconds(Date startTime, Date endTime){
-        int peakDurationSeconds = 0;
-        long start = startTime.getTime() / 1000;
-        long end = endTime.getTime() / 1000;
-        while((end -start) > 24 * 60 * 60){
-            peakDurationSeconds += 12 * 60 * 60;
-            end -= 24* 60 * 60;
-        }
-        endTime.setTime(end * 1000);
-
-        DaytimePeakPeriod peakPeriod = new DaytimePeakPeriod();
-
-        //int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        if(peakPeriod.offPeak(startTime) && peakPeriod.offPeak(endTime) && (end -start) > 12 * 60 * 60) {
-            // phone call covered whole peak period
-            peakDurationSeconds += 12 * 60 * 60;
-        } else if(!peakPeriod.offPeak(startTime) && !peakPeriod.offPeak(endTime)) {
-            // phone call happened within peak period
-            peakDurationSeconds += (end - start) * 60 * 60;
-        } else if(peakPeriod.offPeak(startTime) && !peakPeriod.offPeak(endTime)) {
-            // peak time duration starts from 7am till call ends
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(endTime);
-            int hour = calendar.get(Calendar.HOUR_OF_DAY) - 7;
-            int minute = calendar.get(Calendar.MINUTE);
-            int second = calendar.get(Calendar.SECOND);
-            peakDurationSeconds += hour * 60 * 60 + minute * 60 + second;
-        } else if(!peakPeriod.offPeak(startTime) && peakPeriod.offPeak(endTime)) {
-            // peak time duration starts since call starts, ends at 7pm (19:00)
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTime(startTime);
-            int hour = calendar.get(Calendar.HOUR_OF_DAY) - 19;
-            int minute = calendar.get(Calendar.MINUTE);
-            int second = calendar.get(Calendar.SECOND);
-            peakDurationSeconds += hour * 60 * 60 + minute * 60 + second;
-        }
-
-        return peakDurationSeconds;
     }
 
     public static class LineItem {
