@@ -64,18 +64,6 @@ public class BillingSystem {
 
             BigDecimal cost;
 
-            DaytimePeakPeriod peakPeriod = new DaytimePeakPeriod();
-
-            // TODO: change the implementation as the new feature describes
-            if (peakPeriod.offPeak(call.startTime()) && peakPeriod.offPeak(call.endTime()) && call.durationSeconds() < 12 * 60 * 60) {
-                cost = new BigDecimal(call.durationSeconds()).multiply(tariff.offPeakRate());
-            } else {
-                //cost = new BigDecimal(call.durationSeconds()).multiply(tariff.peakRate());
-                int peakDurationSeconds = this.getPeakDurationSeconds(call.startTime(), call.endTime());
-                int offPeakDurationSeconds = call.durationSeconds() - peakDurationSeconds;
-                cost = new BigDecimal(peakDurationSeconds).multiply(tariff.peakRate()).add(new BigDecimal(offPeakDurationSeconds).multiply(tariff.offPeakRate()));
-            }
-
             /*
             * Utils.getPeakDuration(call.StartTime(),call.endTime())  = peakDuration
             * OffPeakDuration = call.Duration - peakDuration
@@ -85,6 +73,10 @@ public class BillingSystem {
             *
             * cost = offpeakCost + peakCost;
             * */
+            int peakDurationSeconds = this.getPeakDurationSeconds(call.startTime(), call.endTime());
+            int offPeakDurationSeconds = call.durationSeconds() - peakDurationSeconds;
+            cost = new BigDecimal(peakDurationSeconds).multiply(tariff.peakRate()).add(new BigDecimal(offPeakDurationSeconds).multiply(tariff.offPeakRate()));
+
 
             cost = cost.setScale(0, RoundingMode.HALF_UP);
             BigDecimal callCost = cost;
@@ -110,10 +102,10 @@ public class BillingSystem {
         //int hour = calendar.get(Calendar.HOUR_OF_DAY);
         if(peakPeriod.offPeak(startTime) && peakPeriod.offPeak(endTime) && (end -start) > 12 * 60 * 60) {
             // phone call covered whole peak period
-            peakDurationSeconds += 12;
+            peakDurationSeconds += 12 * 60 * 60;
         } else if(!peakPeriod.offPeak(startTime) && !peakPeriod.offPeak(endTime)) {
             // phone call happened within peak period
-            peakDurationSeconds += (end -start);
+            peakDurationSeconds += (end - start) * 60 * 60;
         } else if(peakPeriod.offPeak(startTime) && !peakPeriod.offPeak(endTime)) {
             // peak time duration starts from 7am till call ends
             Calendar calendar = Calendar.getInstance();
