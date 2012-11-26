@@ -4,43 +4,30 @@ import org.joda.time.DateTime;
 import org.joda.time.Duration;
 
 public class TimeUtils {
+    public static final DaytimePeakPeriod peakPeriod = new DaytimePeakPeriod();
 
-	/**
-	 * @param startTime
-	 * @param endTime
-	 * @return
-	 */
-	public static int getPeakDurationSeconds(DateTime startTime, DateTime endTime, DaytimePeakPeriod peakPeriod) {
-		int peakDurationSeconds = 0;		
-		if (peakPeriod.offPeak(startTime.toDate()) && peakPeriod.offPeak(endTime.toDate())
-				&& new Duration(startTime,endTime).getStandardHours() > peakPeriod.getPeakPeriodDuration() * 60 * 60) {
-			// phone call covered whole peak period
-			peakDurationSeconds = peakPeriod.getPeakPeriodDuration() * 60 * 60;
-		} else if (!peakPeriod.offPeak(startTime.toDate())
-				&& !peakPeriod.offPeak(endTime.toDate())) {						
-			if(endTime.getHourOfDay() > startTime.getHourOfDay()){
-				// call starts in peak period and covers off peak period then ends in peak period
-				peakDurationSeconds = ( peakPeriod.PeakPeriodEnd - startTime.getHourOfDay() ) * 60*60 
-						+ (60-startTime.getMinuteOfHour()) * 60 + (60-startTime.getSecondOfMinute())
-						+ (endTime.getHourOfDay() - peakPeriod.PeakPeriodStart) * 60 * 60 
-						+ endTime.getMinuteOfHour() * 60 + endTime.getSecondOfMinute();
-			}else{
-				// phone call happened within peak period
-				peakDurationSeconds = (int) new Duration(startTime,endTime).getStandardSeconds();
-			}			
-		} else if (peakPeriod.offPeak(startTime.toDate())
-				&& !peakPeriod.offPeak(endTime.toDate())) {
-			// peak time duration starts from 7am till call ends
-			peakDurationSeconds = (endTime.getHourOfDay() - peakPeriod.PeakPeriodStart) * 60 * 60 
-					+ endTime.getMinuteOfHour() * 60 + endTime.getSecondOfMinute();
-		} else if (!peakPeriod.offPeak(startTime.toDate())
-				&& peakPeriod.offPeak(endTime.toDate())) {
-			// peak time duration starts since call starts, ends at 7pm (19:00)
-			peakDurationSeconds += (peakPeriod.PeakPeriodEnd - startTime.getHourOfDay()) * 60 * 60 
-					+ (60-startTime.getMinuteOfHour()) * 60 + (60-startTime.getSecondOfMinute());
-		}
+    public static int getPeakDurationSeconds(DateTime start, DateTime end) {
+        Duration duration = new Duration(start, end);
+        return getPeakDuration(start, end, duration.toStandardDays().getDays());
+    }
 
-		return peakDurationSeconds;
-	}
-
+    private static int getPeakDuration(DateTime start, DateTime end, int numberOfDays) {
+        int total = (int)peakPeriod.getPeakPeriodDuration();
+        if(numberOfDays < 1){
+            if (peakPeriod.offPeak(start.toDate()) && peakPeriod.offPeak(end.toDate())){
+                return new Duration(start, end).getStandardHours() > peakPeriod.getPeakPeriodHours()
+                        ? (int)peakPeriod.getPeakPeriodDuration() : 0;
+            } else if(peakPeriod.offPeak(start.toDate())){
+                return (end.getHourOfDay() - peakPeriod.PeakPeriodStart) * 60 * 60
+                        + (60 - end.getMinuteOfHour()) * 60 + (60 - end.getSecondOfMinute());
+            } else if(peakPeriod.offPeak(end.toDate())){
+                return (peakPeriod.PeakPeriodEnd - start.getHourOfDay() ) * 60 * 60
+                        + (60 - start.getMinuteOfHour()) * 60 + (60 - start.getSecondOfMinute());
+            } else {
+                return (int) (((end.getMillis() - start.getMillis()) / 1000));
+            }
+        } else {
+            return total + getPeakDuration(start.plusDays(1), end, numberOfDays - 1);
+        }
+    }
 }
