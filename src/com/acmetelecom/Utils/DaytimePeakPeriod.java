@@ -5,8 +5,19 @@ import java.util.Date;
 
 public class DaytimePeakPeriod {
 
-	public final int PeakPeriodStart = 7;
-	public final int PeakPeriodEnd = 19;
+	public final int PeakPeriodStart;
+	public final int PeakPeriodEnd;
+	
+	/**
+	 * for example DaytimePeakPeriod(7,19) means
+	 * peak periods start at 7am and ends at 7pm
+	 * @param peakStart
+	 * @param peakEnds
+	 */
+	public DaytimePeakPeriod(int peakStart,int peakEnds){
+		PeakPeriodStart = peakStart;
+		PeakPeriodEnd = peakEnds;
+	}
 	
 	public int getPeakPeriodDuration(){
 		return this.PeakPeriodEnd - this.PeakPeriodStart;
