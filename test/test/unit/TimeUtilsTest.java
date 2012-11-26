@@ -1,11 +1,10 @@
 package test.unit;
 
-import static org.junit.Assert.*;
-
+import com.acmetelecom.Utils.TimeUtils;
 import org.joda.time.DateTime;
 import org.junit.Test;
 
-import com.acmetelecom.Utils.TimeUtils;
+import static org.junit.Assert.assertEquals;
 
 public class TimeUtilsTest {
 
@@ -84,7 +83,4 @@ public class TimeUtilsTest {
         int peakDuration = TimeUtils.getPeakDurationSeconds(startTime, endTime);
         assertEquals(3,peakDuration);
     }
-
-
-	
 }

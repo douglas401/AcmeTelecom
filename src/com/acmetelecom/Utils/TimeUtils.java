@@ -12,29 +12,28 @@ public class TimeUtils {
     }
 
     private static int getPeakDuration(DateTime start, DateTime end, int numberOfDays) {
-        int total = (int)peakPeriod.getPeakPeriodSeconds();
+        int durationOfOneDay = (int)peakPeriod.getPeakPeriodSeconds();
         Duration duration = new Duration(start, end);
         if(numberOfDays < 1){
             if (peakPeriod.offPeak(start.toDate()) && peakPeriod.offPeak(end.toDate())){
                 return duration.getStandardHours() > peakPeriod.getPeakPeriodHours()
-                        ? (int)peakPeriod.getPeakPeriodSeconds() : 0;
+                        ? durationOfOneDay : 0;
             } else if(!peakPeriod.offPeak(start.toDate()) && !peakPeriod.offPeak(end.toDate())) {
                 return duration.getStandardHours() > peakPeriod.getPeakPeriodHours()
                         ? (int) (duration.getStandardSeconds() - peakPeriod.getPeakPeriodSeconds())
-                        : (int) (((end.getMillis() - start.getMillis()) / 1000));
+                        : (int) duration.getStandardSeconds();
             } else {
                 return peakPeriod.offPeak(start.toDate())
                         ? getDurationSecondsWhenOverlap(peakPeriod.PeakPeriodStart, end)
                         : getDurationSecondsWhenOverlap(peakPeriod.PeakPeriodEnd, start);
             }
         } else {
-            return total + getPeakDuration(start.plusDays(1), end, numberOfDays - 1);
+            return durationOfOneDay + getPeakDuration(start.plusDays(1), end, numberOfDays - 1);
         }
     }
 
     private static int getDurationSecondsWhenOverlap(int peakPeriod, DateTime date) {
-        return Math.abs(date.getHourOfDay() - peakPeriod) * 60 * 60
-                + Math.abs(0 - date.getMinuteOfHour()) * 60
-                + Math.abs(0 - date.getSecondOfMinute());
+        Duration peakDuration = new Duration(date, new DateTime(date.withTimeAtStartOfDay()).plusHours(peakPeriod));
+        return Math.abs((int) peakDuration.getStandardSeconds());
     }
 }
