@@ -12,7 +12,7 @@ public class DaytimePeakPeriod {
         return this.PeakPeriodEnd - this.PeakPeriodStart;
     }
 
-	public long getPeakPeriodDuration(){
+	public long getPeakPeriodSeconds(){
 		return ( this.PeakPeriodEnd - this.PeakPeriodStart ) * 60 * 60;
 	}
 	
