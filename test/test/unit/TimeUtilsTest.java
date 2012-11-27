@@ -70,17 +70,9 @@ public class TimeUtilsTest {
         assertEquals(3*60*60,peakDuration);
 
         // over night
-        /*DateTime startTime2 = new DateTime(2012, 11, 1, 18, 30, 0);
+        DateTime startTime2 = new DateTime(2012, 11, 1, 18, 30, 0);
         DateTime endTime2 = startTime.plusHours(10);
         int peakDuration2 = TimeUtils.getPeakDurationSeconds(startTime2, endTime2);
-        assertEquals(30*60,peakDuration2);           */
-    }
-
-    @Test
-    public void testThreeSecondDuration() {
-        DateTime startTime = new DateTime(2012, 11, 1, 18, 0, 0);
-        DateTime endTime = startTime.plusSeconds(3);
-        int peakDuration = TimeUtils.getPeakDurationSeconds(startTime, endTime);
-        assertEquals(3,peakDuration);
+        assertEquals(30*60,peakDuration2);
     }
 }
