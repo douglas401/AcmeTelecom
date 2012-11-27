@@ -6,6 +6,12 @@ import org.joda.time.Duration;
 public class TimeUtils {
     public static final DaytimePeakPeriod peakPeriod = new DaytimePeakPeriod();
 
+    /**
+     *
+     * @param start
+     * @param end
+     * @return
+     */
     public static int getPeakDurationSeconds(DateTime start, DateTime end) {
         Duration duration = new Duration(start, end);
         return getPeakDuration(start, end, duration.toStandardDays().getDays());
