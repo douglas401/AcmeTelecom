@@ -4,13 +4,16 @@ import org.joda.time.DateTime;
 import org.joda.time.Duration;
 
 public class TimeUtils {
+    /**
+     * The <cref>DaytimePeakPeriod</cref> used to get information of peak and off peak period.
+     */
     public static final DaytimePeakPeriod peakPeriod = new DaytimePeakPeriod();
 
     /**
-     *
-     * @param start
-     * @param end
-     * @return
+     * Gets the length of phone call lasted in peak period.
+     * @param start The start time of phone call.
+     * @param end The end time of phone call.
+     * @return The duration of phone call in peak period in seconds.
      */
     public static int getPeakDurationSeconds(DateTime start, DateTime end) {
         Duration duration = new Duration(start, end);
