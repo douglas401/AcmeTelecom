@@ -74,7 +74,6 @@ public class BillingSystemTest {
                 return item.getPhoneNumber().equals(customerA.getPhoneNumber());
             }
 
-            @Override
             public void describeTo(Description description) { return; }
         };
     }
