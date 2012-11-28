@@ -1,0 +1,13 @@
+Acceptance test (TelecomScenarioTest)
+
+Our fluent language
+
+Lang = while expectation -> afterGeneratingBills -> verification
+
+expectation =
+
+
+                .newCallAt(System.currentTimeMillis())
+                .from("447722113434")
+                .to("447766511332")
+                .forSeconds(20)
