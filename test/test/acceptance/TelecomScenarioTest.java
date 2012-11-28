@@ -9,25 +9,14 @@ public class TelecomScenarioTest {
     * Simple application running scenario
     * */
     @Test
-    public void TestRunNoCalls() {
+    public void NoCalls() {
         telecom.whileApplicationRuns()
                 .afterGeneratingBills()
                 .expectNoCalls();
     }
 
     @Test
-    public void TestRunWithSingleCallNoCustomerFound() {
-        telecom.whileApplicationRuns()
-                .newCallAt(Now())
-                .from("447711111111")
-                .to("447722113434")
-                .forSeconds(30)
-                .afterGeneratingBills()
-                .expectNoCalls();
-    }
-
-    @Test
-    public void TestRunWithSingleCall() {
+    public void SingleCall() {
         telecom.whileApplicationRuns()
                 .newCallAt(Now())
                 .from("447722113434")
@@ -39,7 +28,18 @@ public class TelecomScenarioTest {
     }
 
     @Test
-    public void TestRunWithMultipleCalls() {
+    public void SingleCallCustomerNotFound() {
+        telecom.whileApplicationRuns()
+                .newCallAt(Now())
+                .from("447711111111")
+                .to("447722113434")
+                .forSeconds(30)
+                .afterGeneratingBills()
+                .expectNoCalls();
+    }
+
+    @Test
+    public void MultipleCalls() {
         telecom.whileApplicationRuns()
                 .newCallAt(Now()).from("447722113434").to("447766511332").forSeconds(20)
                 .newCallAt(Now()).from("447777765432").to("447711111111").forSeconds(40)
@@ -48,39 +48,26 @@ public class TelecomScenarioTest {
                 .expectTotalNumberOfCalls(3);
     }
 
-
+    @Test
+    public void MultipleCallsCustomerNotFound() {
+        telecom.whileApplicationRuns()
+                .newCallAt(Now()).from("447722113434").to("447766511332").forSeconds(20)
+                .newCallAt(Now()).from("447777765432").to("447711111111").forMinutes(4)
+                .newCallAt(Now()).from("447722222222").to("447711111111").forSeconds(30)
+                .afterGeneratingBills()
+                .expectTotalNumberOfCalls(2)
+                .expectBillOnPhoneNumber("447722113434")
+                .expectBillOnPhoneNumber("447777765432");
+    }
 
     /*
     * Tests to determine peak/off-peak duration
     * */
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+    /**
+     * Private functions
+     */
     private long Now() {
         return System.currentTimeMillis();
     }
