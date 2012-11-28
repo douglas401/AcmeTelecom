@@ -25,6 +25,7 @@ public class BillingSystem {
     //error with initialization
     public BillingSystem(IBillGenerator billGenerator) {
         this.billGenerator = billGenerator;
+        this.timeUtils = new TimeUtils();
     }
 
     public BillingSystem(IBillGenerator billGenerator, ITimeUtils timeUtils) {

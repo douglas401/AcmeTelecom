@@ -5,6 +5,9 @@ import com.acmetelecom.IBillGenerator;
 import com.acmetelecom.MoneyFormatter;
 import com.acmetelecom.Utils.ITimeUtils;
 import com.acmetelecom.customer.Customer;
+import org.hamcrest.Description;
+import org.hamcrest.Matcher;
+import org.hamcrest.TypeSafeMatcher;
 import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
@@ -32,7 +35,7 @@ public class BillingSystemTest {
         final String totalBillForA =  MoneyFormatter.penceToPounds(totalBillA);
 
         // customers
-        final Customer customerA = new Customer("","7447111111","");
+        final Customer customerA = new Customer("","447722113434","");
         final List<Customer> customers = new ArrayList<Customer>(){};
         customers.add(customerA);
 
@@ -45,7 +48,8 @@ public class BillingSystemTest {
 
         final IBillGenerator billGenerator = context.mock(IBillGenerator.class);
         context.checking(new Expectations() {{
-            allowing(billGenerator).send(with(any(Customer.class)), with(any(List.class)), with(equal(totalBillForA)));//customerA, itemsForA, MoneyFormatter.penceToPounds(totalBillForA));
+            Customer c;
+            allowing(billGenerator).send(with(isCustomerMatches(customerA)), with(any(List.class)), with(equal(totalBillForA)));//customerA, itemsForA, MoneyFormatter.penceToPounds(totalBillForA));
         }});
 
         final ITimeUtils timeUtils = context.mock(ITimeUtils.class);
@@ -55,9 +59,23 @@ public class BillingSystemTest {
         }});
 
         BillingSystem billingSystem = new BillingSystem(billGenerator, timeUtils);
+        billingSystem.callInitiated("447722113434","7447111111");
+        billingSystem.callCompleted("447722113434", "7447111111");
 
         billingSystem.createCustomerBills();
 
         context.assertIsSatisfied();
+    }
+
+    private Matcher<Customer> isCustomerMatches(final Customer customerA) {
+        return new TypeSafeMatcher<Customer>() {
+            @Override
+            public boolean matchesSafely(Customer item) {
+                return item.getPhoneNumber().equals(customerA.getPhoneNumber());
+            }
+
+            @Override
+            public void describeTo(Description description) { return; }
+        };
     }
 }
