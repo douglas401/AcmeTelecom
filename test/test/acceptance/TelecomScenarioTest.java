@@ -30,10 +30,16 @@ public class TelecomScenarioTest {
     @Test
     public void TestRunWithMultipleCalls() {
         telecom.whileApplicationRuns()
-                // Add call information
+                .newCallAt(System.currentTimeMillis())
+                .from("447722113434")
+                .to("447766511332")
+                .forSeconds(20)
+                .newCallAt(System.currentTimeMillis())
+                .from("447777765432")
+                .to("447711111111")
+                .forSeconds(40)
                 .afterGeneratingBills()
-                // Add assert information
-                ;
+                .expectTotalNumberOfCalls(2);
     }
 
     /*
