@@ -1,23 +1,39 @@
 package com.acmetelecom.billing;
 
-import com.acmetelecom.utils.TimeUtils;
 import com.acmetelecom.customer.CentralCustomerDatabase;
 import com.acmetelecom.customer.CentralTariffDatabase;
 import com.acmetelecom.customer.Customer;
 import com.acmetelecom.customer.Tariff;
+import com.acmetelecom.utils.ITimeUtils;
+import com.acmetelecom.utils.TimeUtils;
 import org.joda.time.DateTime;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BillingSystem {
 
+    private ITimeUtils timeUtils;
     private List<CallEvent> callLog = new ArrayList<CallEvent>();
     private IBillGenerator billGenerator;
 
+    // error with initialization
+    public BillingSystem(){
+        timeUtils = new TimeUtils();
+        billGenerator = new BillGenerator();
+    }
+
+    //error with initialization
     public BillingSystem(IBillGenerator billGenerator) {
         this.billGenerator = billGenerator;
+        this.timeUtils = new TimeUtils();
+    }
+
+    public BillingSystem(IBillGenerator billGenerator, ITimeUtils timeUtils) {
+        this.billGenerator = billGenerator;
+        this.timeUtils = timeUtils;
     }
 
     public void callInitiated(String caller, String callee) {
@@ -75,7 +91,7 @@ public class BillingSystem {
             *
             * cost = offpeakCost + peakCost;
             * */
-            int peakDurationSeconds = TimeUtils.getPeakDurationSeconds(new DateTime(call.startTime()), new DateTime(call.endTime()));
+            int peakDurationSeconds = timeUtils.getPeakDurationSeconds(new DateTime(call.startTime()), new DateTime(call.endTime()));
             int offPeakDurationSeconds = call.durationSeconds() - peakDurationSeconds;
             cost = new BigDecimal(peakDurationSeconds).multiply(tariff.peakRate()).add(new BigDecimal(offPeakDurationSeconds).multiply(tariff.offPeakRate()));
 
@@ -85,7 +101,7 @@ public class BillingSystem {
             items.add(new LineItem(call, callCost));
         }
 
-		billGenerator.send(customer, items, MoneyFormatter.penceToPounds(totalBill));
+        billGenerator.send(customer, items, MoneyFormatter.penceToPounds(totalBill));
     }
 
     public static class LineItem {

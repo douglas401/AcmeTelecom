@@ -3,15 +3,24 @@ package com.acmetelecom.utils;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 
-public class TimeUtils {
+public class TimeUtils implements ITimeUtils {
+    /**
+     * The <cref>DaytimePeakPeriod</cref> used to get information of peak and off peak period.
+     */
     public static final DaytimePeakPeriod peakPeriod = new DaytimePeakPeriod();
 
-    public static int getPeakDurationSeconds(DateTime start, DateTime end) {
+    /**
+     * Gets the length of phone call lasted in peak period.
+     * @param start The start time of phone call.
+     * @param end The end time of phone call.
+     * @return The duration of phone call in peak period in seconds.
+     */
+    public int getPeakDurationSeconds(DateTime start, DateTime end) {
         Duration duration = new Duration(start, end);
         return getPeakDuration(start, end, duration.toStandardDays().getDays());
     }
 
-    private static int getPeakDuration(DateTime start, DateTime end, int numberOfDays) {
+    private int getPeakDuration(DateTime start, DateTime end, int numberOfDays) {
         int durationOfOneDay = (int)peakPeriod.getPeakPeriodSeconds();
         Duration duration = new Duration(start, end);
         if(numberOfDays < 1){
@@ -32,7 +41,7 @@ public class TimeUtils {
         }
     }
 
-    private static int getDurationSecondsWhenOverlap(int peakPeriod, DateTime date) {
+    private int getDurationSecondsWhenOverlap(int peakPeriod, DateTime date) {
         Duration peakDuration = new Duration(date, new DateTime(date.withTimeAtStartOfDay()).plusHours(peakPeriod));
         return Math.abs((int) peakDuration.getStandardSeconds());
     }
