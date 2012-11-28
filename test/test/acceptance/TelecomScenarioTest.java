@@ -16,9 +16,20 @@ public class TelecomScenarioTest {
     }
 
     @Test
+    public void TestRunWithSingleCallNoCustomerFound() {
+        telecom.whileApplicationRuns()
+                .newCallAt(Now())
+                .from("447711111111")
+                .to("447722113434")
+                .forSeconds(30)
+                .afterGeneratingBills()
+                .expectNoCalls();
+    }
+
+    @Test
     public void TestRunWithSingleCall() {
         telecom.whileApplicationRuns()
-                .newCallAt(System.currentTimeMillis())
+                .newCallAt(Now())
                 .from("447722113434")
                 .to("447766511332")
                 .forSeconds(20)
@@ -30,19 +41,48 @@ public class TelecomScenarioTest {
     @Test
     public void TestRunWithMultipleCalls() {
         telecom.whileApplicationRuns()
-                .newCallAt(System.currentTimeMillis())
-                .from("447722113434")
-                .to("447766511332")
-                .forSeconds(20)
-                .newCallAt(System.currentTimeMillis())
-                .from("447777765432")
-                .to("447711111111")
-                .forSeconds(40)
+                .newCallAt(Now()).from("447722113434").to("447766511332").forSeconds(20)
+                .newCallAt(Now()).from("447777765432").to("447711111111").forSeconds(40)
+                .newCallAt(Now()).from("447722113434").to("447711111111").forMinutes(3)
                 .afterGeneratingBills()
-                .expectTotalNumberOfCalls(2);
+                .expectTotalNumberOfCalls(3);
     }
+
+
 
     /*
     * Tests to determine peak/off-peak duration
     * */
-}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private long Now() {
+        return System.currentTimeMillis();
+    }
+
+ }
