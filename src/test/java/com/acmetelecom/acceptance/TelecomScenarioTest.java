@@ -31,7 +31,7 @@ public class TelecomScenarioTest {
     public void SingleCallCustomerNotFound() {
         telecom.whileApplicationRuns()
                 .newCallAt(Now())
-                .from("447711111111")
+                .from("447788888888")
                 .to("447722113434")
                 .forSeconds(30)
                 .afterGeneratingBills()
