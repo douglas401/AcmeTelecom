@@ -1,48 +1,68 @@
 package com.acmetelecom.billing;
 
+import com.acmetelecom.calling.Call;
+import com.acmetelecom.calling.CallEnd;
+import com.acmetelecom.calling.CallEvent;
+import com.acmetelecom.calling.CallStart;
 import com.acmetelecom.customer.CentralCustomerDatabase;
 import com.acmetelecom.customer.CentralTariffDatabase;
 import com.acmetelecom.customer.Customer;
 import com.acmetelecom.customer.Tariff;
-import com.acmetelecom.utils.ITimeUtils;
-import com.acmetelecom.utils.TimeUtils;
+import com.acmetelecom.utils.MoneyFormatter;
+
 import org.joda.time.DateTime;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BillingSystem {
 
-    private ITimeUtils timeUtils;
+    private IDurationCalculator durationCalculator;
     private List<CallEvent> callLog = new ArrayList<CallEvent>();
+    private Map<String, List<CallEvent>> callLogMap = new HashMap<String, List<CallEvent>>();
     private IBillGenerator billGenerator;
 
     // error with initialization
     public BillingSystem(){
-        timeUtils = new TimeUtils();
+        durationCalculator = new DurationCalculator(new DaytimePeakPeriod(7,19));
         billGenerator = new BillGenerator();
     }
 
     //error with initialization
     public BillingSystem(IBillGenerator billGenerator) {
         this.billGenerator = billGenerator;
-        this.timeUtils = new TimeUtils();
+        this.durationCalculator = new DurationCalculator(new DaytimePeakPeriod(7,19));
     }
 
-    public BillingSystem(IBillGenerator billGenerator, ITimeUtils timeUtils) {
+    public BillingSystem(IBillGenerator billGenerator, IDurationCalculator timeUtils) {
         this.billGenerator = billGenerator;
-        this.timeUtils = timeUtils;
+        this.durationCalculator = timeUtils;
     }
 
     public void callInitiated(String caller, String callee) {
-        callLog.add(new CallStart(caller, callee));
+    	List<CallEvent> callersEventList;
+    	callersEventList = getCallerEventList(caller);
+    	callersEventList.add(new CallStart(caller, callee));
     }
 
     public void callCompleted(String caller, String callee) {
-        callLog.add(new CallEnd(caller, callee));
+    	List<CallEvent> callersEventList;
+    	callersEventList = getCallerEventList(caller);
+    	callersEventList.add(new CallEnd(caller, callee));
     }
+
+	private List<CallEvent> getCallerEventList(String caller) {
+		List<CallEvent> callersEventList;
+		if ((callersEventList = callLogMap.get(caller)) == null){
+    		callersEventList = new ArrayList<CallEvent>();
+    		callLogMap.put(caller, callersEventList);
+    	}
+		return callersEventList;
+	}
 
     public void createCustomerBills() {
         List<Customer> customers = CentralCustomerDatabase.getInstance().getCustomers();
@@ -53,12 +73,7 @@ public class BillingSystem {
     }
 
     private void createBillFor(Customer customer) {
-        List<CallEvent> customerEvents = new ArrayList<CallEvent>();
-        for (CallEvent callEvent : callLog) {
-            if (callEvent.getCaller().equals(customer.getPhoneNumber())) {
-                customerEvents.add(callEvent);
-            }
-        }
+        List<CallEvent> customerEvents = getCallerEventList(customer.getPhoneNumber());
 
         List<Call> calls = new ArrayList<Call>();
 
@@ -91,7 +106,7 @@ public class BillingSystem {
             *
             * cost = offpeakCost + peakCost;
             * */
-            int peakDurationSeconds = timeUtils.getPeakDurationSeconds(new DateTime(call.startTime()), new DateTime(call.endTime()));
+            int peakDurationSeconds = durationCalculator.getPeakDurationSeconds(new DateTime(call.startTime()), new DateTime(call.endTime()));
             int offPeakDurationSeconds = call.durationSeconds() - peakDurationSeconds;
             cost = new BigDecimal(peakDurationSeconds).multiply(tariff.peakRate()).add(new BigDecimal(offPeakDurationSeconds).multiply(tariff.offPeakRate()));
 

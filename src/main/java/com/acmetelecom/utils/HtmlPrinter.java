@@ -1,6 +1,6 @@
-package com.acmetelecom.billing;
+package com.acmetelecom.utils;
 
-class HtmlPrinter implements Printer {
+public class HtmlPrinter implements Printer {
 
     private static Printer instance = new HtmlPrinter();
 

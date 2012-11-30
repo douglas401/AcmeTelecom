@@ -2,9 +2,10 @@ package com.acmetelecom.unit;
 
 import com.acmetelecom.billing.BillingSystem;
 import com.acmetelecom.billing.IBillGenerator;
-import com.acmetelecom.billing.MoneyFormatter;
+import com.acmetelecom.billing.IDurationCalculator;
 import com.acmetelecom.customer.Customer;
-import com.acmetelecom.utils.ITimeUtils;
+import com.acmetelecom.utils.MoneyFormatter;
+
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
@@ -52,7 +53,7 @@ public class BillingSystemTest {
             allowing(billGenerator).send(with(isCustomerMatches(customerA)), with(any(List.class)), with(equal(totalBillForA)));//customerA, itemsForA, MoneyFormatter.penceToPounds(totalBillForA));
         }});
 
-        final ITimeUtils timeUtils = context.mock(ITimeUtils.class);
+        final IDurationCalculator timeUtils = context.mock(IDurationCalculator.class);
         context.checking(new Expectations() {{
             allowing(timeUtils).getPeakDurationSeconds(with(any(DateTime.class)),with(any(DateTime.class)));
             will(returnValue(0));
