@@ -147,4 +147,13 @@ public class DurationCalculatorTest {
     	assertEquals(0, peakDuration);
     }
     
+    @Test
+    public void testOvernightPeakCallOnOneDay() {
+    	IDurationCalculator dC = new DurationCalculator(new DaytimePeakPeriod(21,6));
+    	DateTime startTime = new DateTime(2012, 11, 1, 3, 0, 0);
+    	DateTime endTime = new DateTime(2012, 11, 1, 22, 0, 0);
+    	int peakDuration = dC.getPeakDurationSeconds(startTime, endTime);
+    	assertEquals(4*60*60, peakDuration);
+    }
+     
 }

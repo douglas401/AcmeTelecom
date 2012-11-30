@@ -24,6 +24,8 @@ public class DurationCalculator implements IDurationCalculator {
         return getPeakDuration(start, end, duration.toStandardDays().getDays());
     }
 
+    // TODO: Clean this method up. Very confusing + hard to read, but works properly now
+    // TODO: Do the clean up AFTER PeakPeriod is changed to use jodatime only.
     private int getPeakDuration(DateTime start, DateTime end, int numberOfDays) {
         int durationOfOneDay = (int) peakPeriod.getPeakPeriodSeconds();
         Duration duration = new Duration(start, end);
@@ -44,7 +46,17 @@ public class DurationCalculator implements IDurationCalculator {
             		Duration secondPeakSection = new Duration(startOfPeakOnEndDay, end);
             		Duration peakDuration = firstPeakSection.plus(secondPeakSection);
             		return (int) peakDuration.getStandardSeconds();
-            	} 
+            	} else if (end.isAfter(endOfPeakOnStartDay) 
+            			&& end.isAfter(new DateTime(end.getYear(), end.getMonthOfYear(), 
+                				end.getDayOfMonth(), peakPeriod.getPeakPeriodStart(), 0, 0))
+            			&& peakPeriod.isOvernightPeakPeriod()){
+            		Duration firstPeakSection = new Duration(start, endOfPeakOnStartDay);
+            		DateTime startOfPeakOnEndDay = new DateTime(end.getYear(), end.getMonthOfYear(), 
+            				end.getDayOfMonth(), peakPeriod.getPeakPeriodStart(), 0, 0);
+            		Duration secondPeakSection = new Duration(startOfPeakOnEndDay, end);
+            		Duration peakDuration = firstPeakSection.plus(secondPeakSection);
+            		return (int) peakDuration.getStandardSeconds();
+            	}
             	// If call is within a peak period
             	else {
             		return (int) duration.getStandardSeconds();
