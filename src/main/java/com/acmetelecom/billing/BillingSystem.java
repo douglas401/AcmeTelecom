@@ -18,27 +18,20 @@ import java.util.Map;
 public class BillingSystem {
 
     private IDurationCalculator durationCalculator;
-    private List<CallEvent> callLog = new ArrayList<CallEvent>();
+    // a map of caller's phone number as key and a list of call events as value
     private Map<String, List<CallEvent>> callLogMap = new HashMap<String, List<CallEvent>>();
     private IBillGenerator billGenerator;
     private CustomerDatabase customerDatabase = CentralCustomerDatabase.getInstance();
     private TariffLibrary tariffDatabase = CentralTariffDatabase.getInstance();
 
-    // error with initialization
     public BillingSystem(){
-        durationCalculator = new DurationCalculator(new DaytimePeakPeriod(7,19));
+        durationCalculator = new DurationCalculator(new DaytimePeakPeriod());
         billGenerator = new BillGenerator();
     }
 
-    //error with initialization
     public BillingSystem(IBillGenerator billGenerator) {
         this.billGenerator = billGenerator;
-        this.durationCalculator = new DurationCalculator(new DaytimePeakPeriod(7,19));
-    }
-
-    public BillingSystem(IBillGenerator billGenerator, IDurationCalculator timeUtils) {
-        this.billGenerator = billGenerator;
-        this.durationCalculator = timeUtils;
+        this.durationCalculator = new DurationCalculator(new DaytimePeakPeriod());
     }
 
     public void callInitiated(String caller, String callee) {
@@ -67,7 +60,7 @@ public class BillingSystem {
         for (Customer customer : customers) {
             createBillFor(customer);
         }
-        callLog.clear();
+        callLogMap.clear();
     }
 
     private void createBillFor(Customer customer) {
