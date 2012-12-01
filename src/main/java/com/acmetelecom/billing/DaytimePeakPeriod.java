@@ -18,6 +18,8 @@ public class DaytimePeakPeriod implements PeakPeriod {
 	}
 
 	public DaytimePeakPeriod(){
+        start = 7;
+        end = 19;
 	}
 	
     public DaytimePeakPeriod(int peakPeriodStart, int peakPeriodEnd) {
