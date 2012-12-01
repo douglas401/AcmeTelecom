@@ -4,6 +4,11 @@ import java.util.Calendar;
 import java.util.Date;
 
 // TODO: CHANGE THIS CLASS TO ONLY USE JODADATETIME... SHOULD NOT BE LIMITED TO ONLY HOURS..
+
+/**
+ * @see PeakPeriod
+ *
+ */
 public class DaytimePeakPeriod implements PeakPeriod {
 
 	private int start = 0;
