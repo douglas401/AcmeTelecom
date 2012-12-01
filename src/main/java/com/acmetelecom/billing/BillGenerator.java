@@ -10,7 +10,7 @@ import java.util.List;
 public class BillGenerator implements IBillGenerator {
 
     /* (non-Javadoc)
-	 * @see com.acmetelecom.IBillGenerator#send(com.acmetelecom.customer.Customer, java.util.List, java.lang.String)
+	 * @see com.acmetelecom.billing.IBillGenerator#send(com.acmetelecom.customer.Customer, java.util.List, java.lang.String)
 	 */
     public void send(Customer customer, List<BillingSystem.LineItem> calls, String totalBill) {
 
