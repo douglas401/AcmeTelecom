@@ -4,12 +4,8 @@ import com.acmetelecom.calling.Call;
 import com.acmetelecom.calling.CallEnd;
 import com.acmetelecom.calling.CallEvent;
 import com.acmetelecom.calling.CallStart;
-import com.acmetelecom.customer.CentralCustomerDatabase;
-import com.acmetelecom.customer.CentralTariffDatabase;
-import com.acmetelecom.customer.Customer;
-import com.acmetelecom.customer.Tariff;
+import com.acmetelecom.customer.*;
 import com.acmetelecom.utils.MoneyFormatter;
-
 import org.joda.time.DateTime;
 
 import java.math.BigDecimal;
@@ -25,6 +21,8 @@ public class BillingSystem {
     private List<CallEvent> callLog = new ArrayList<CallEvent>();
     private Map<String, List<CallEvent>> callLogMap = new HashMap<String, List<CallEvent>>();
     private IBillGenerator billGenerator;
+    private CustomerDatabase customerDatabase = CentralCustomerDatabase.getInstance();
+    private TariffLibrary tariffDatabase = CentralTariffDatabase.getInstance();
 
     // error with initialization
     public BillingSystem(){
@@ -65,7 +63,7 @@ public class BillingSystem {
 	}
 
     public void createCustomerBills() {
-        List<Customer> customers = CentralCustomerDatabase.getInstance().getCustomers();
+        List<Customer> customers = customerDatabase.getCustomers();
         for (Customer customer : customers) {
             createBillFor(customer);
         }
@@ -93,7 +91,7 @@ public class BillingSystem {
 
         for (Call call : calls) {
 
-            Tariff tariff = CentralTariffDatabase.getInstance().tarriffFor(customer);
+            Tariff tariff = tariffDatabase.tarriffFor(customer);
 
             BigDecimal cost;
 
