@@ -29,7 +29,7 @@ public class DurationCalculator implements IDurationCalculator {
     }
 
     private int getPeakDuration(DateTime callStart, DateTime callEnd, int numberOfDays) {
-        int durationOfPeakPeriod = (int) peakPeriod.getPeakPeriodSeconds();
+        int durationOfAPeakPeriod = (int) peakPeriod.getPeakPeriodSeconds();
         Duration callDuration = new Duration(callStart, callEnd);
         if (numberOfDays < 1){
         	// On the day the call starts, the start of the peak period
@@ -57,7 +57,7 @@ public class DurationCalculator implements IDurationCalculator {
             if (peakPeriod.offPeak(callStart.toDate()) && peakPeriod.offPeak(callEnd.toDate())){
             	// Call starts before a peak period, ends after it
             	if (call.overlaps(firstDayPeak) || call.overlaps(secondDayPeak)){
-            		return durationOfPeakPeriod;
+            		return durationOfAPeakPeriod;
             	} 
             	// Call is within an off peak period
             	else {
@@ -115,7 +115,7 @@ public class DurationCalculator implements IDurationCalculator {
             	}
             }
         } else {
-            return durationOfPeakPeriod + getPeakDuration(callStart.plusDays(1), callEnd, numberOfDays - 1);
+            return durationOfAPeakPeriod + getPeakDuration(callStart.plusDays(1), callEnd, numberOfDays - 1);
         }
     }
 }
