@@ -38,10 +38,5 @@ public interface PeakPeriod {
      */
     public abstract int getPeakPeriodEnd();
 
-    /**
-     * Check if the peak period is overnight
-     * @return true if the peak period is overnight, false otherwise
-     */
-    public abstract boolean isOvernightPeakPeriod();
 
 }

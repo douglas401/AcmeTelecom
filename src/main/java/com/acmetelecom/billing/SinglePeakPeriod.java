@@ -9,7 +9,7 @@ import java.util.Date;
  * @see PeakPeriod
  *
  */
-public class DaytimePeakPeriod implements PeakPeriod {
+public class SinglePeakPeriod implements PeakPeriod {
 
 	private int start = 0;
 	private int end = 0;
@@ -22,12 +22,12 @@ public class DaytimePeakPeriod implements PeakPeriod {
 		return end;
 	}
 
-	public DaytimePeakPeriod(){
+	public SinglePeakPeriod(){
         start = 7;
         end = 19;
 	}
 	
-    public DaytimePeakPeriod(int peakPeriodStart, int peakPeriodEnd) {
+    public SinglePeakPeriod(int peakPeriodStart, int peakPeriodEnd) {
 		start = peakPeriodStart;
 		end = peakPeriodEnd;
 	}
@@ -51,7 +51,4 @@ public class DaytimePeakPeriod implements PeakPeriod {
         }
     }
 
-	public boolean isOvernightPeakPeriod() {
-		return !(start < end);
-	}
 }

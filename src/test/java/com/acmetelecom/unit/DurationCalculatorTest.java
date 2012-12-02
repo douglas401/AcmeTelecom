@@ -1,6 +1,6 @@
 package com.acmetelecom.unit;
 
-import com.acmetelecom.billing.DaytimePeakPeriod;
+import com.acmetelecom.billing.SinglePeakPeriod;
 import com.acmetelecom.billing.DurationCalculator;
 import com.acmetelecom.billing.IDurationCalculator;
 import com.acmetelecom.billing.PeakPeriod;
@@ -13,7 +13,7 @@ import static org.junit.Assert.assertEquals;
 public class DurationCalculatorTest {
 
 	// A default duration calculator, with single peak period from 7am to 7pm, used in most of the tests here
-    IDurationCalculator defaultDC = new DurationCalculator(new DaytimePeakPeriod(7, 19));
+    IDurationCalculator defaultDC = new DurationCalculator(new SinglePeakPeriod(7, 19));
 
     @Test
     public void testTwoDaysDuration() {
@@ -85,7 +85,7 @@ public class DurationCalculatorTest {
     
     @Test
     public void testOvernightAndLongPeak() {
-        IDurationCalculator dC = new DurationCalculator(new DaytimePeakPeriod(2,23));
+        IDurationCalculator dC = new DurationCalculator(new SinglePeakPeriod(2,23));
         DateTime startTime = new DateTime(2012, 11, 1, 22, 0, 0);
         DateTime endTime = new DateTime(2012, 11, 2, 8, 0, 0);
         int peakDuration = dC.getPeakDurationSeconds(startTime, endTime);
@@ -94,7 +94,7 @@ public class DurationCalculatorTest {
     
     @Test
     public void testOffPeakToOffPeakThroughPeak() {
-    	PeakPeriod peakPeriod = new DaytimePeakPeriod(10,16);
+    	PeakPeriod peakPeriod = new SinglePeakPeriod(10,16);
         IDurationCalculator dC = new DurationCalculator(peakPeriod);
         DateTime startTime = new DateTime(2012, 11, 1, 9, 58, 0);
         DateTime endTime = new DateTime(2012, 11, 1, 16, 2, 0);
@@ -104,7 +104,7 @@ public class DurationCalculatorTest {
     
     @Test
     public void testPeaktoPeakOvernightWithShortPeak() {
-        IDurationCalculator dC = new DurationCalculator(new DaytimePeakPeriod(10,16));
+        IDurationCalculator dC = new DurationCalculator(new SinglePeakPeriod(10,16));
         DateTime startTime = new DateTime(2012, 11, 1, 15, 0, 0);
         DateTime endTime = new DateTime(2012, 11, 2, 11, 0, 0);
         int peakDuration = dC.getPeakDurationSeconds(startTime, endTime);
@@ -113,7 +113,7 @@ public class DurationCalculatorTest {
     
     @Test
     public void testPeakPeriodGoesThroughMidnight() {
-    	IDurationCalculator dC = new DurationCalculator(new DaytimePeakPeriod(20,5));
+    	IDurationCalculator dC = new DurationCalculator(new SinglePeakPeriod(20,5));
     	DateTime startTime = new DateTime(2012, 11, 1, 21, 0, 0);
     	DateTime endTime = new DateTime(2012, 11, 2, 4, 0, 0);
     	int peakDuration = dC.getPeakDurationSeconds(startTime, endTime);
@@ -122,7 +122,7 @@ public class DurationCalculatorTest {
     
     @Test
     public void testPeakPeriodGoesThroughMidnightCallFromPeakToOff() {
-    	IDurationCalculator dC = new DurationCalculator(new DaytimePeakPeriod(20,5));
+    	IDurationCalculator dC = new DurationCalculator(new SinglePeakPeriod(20,5));
     	DateTime startTime = new DateTime(2012, 11, 1, 21, 0, 0);
     	DateTime endTime = new DateTime(2012, 11, 2, 6, 0, 0);
     	int peakDuration = dC.getPeakDurationSeconds(startTime, endTime);
@@ -131,7 +131,7 @@ public class DurationCalculatorTest {
     
     @Test
     public void testPeakPeriodGoesThroughMidnightCallFromOffToOff() {
-    	IDurationCalculator dC = new DurationCalculator(new DaytimePeakPeriod(20,5));
+    	IDurationCalculator dC = new DurationCalculator(new SinglePeakPeriod(20,5));
     	DateTime startTime = new DateTime(2012, 11, 1, 6, 0, 0);
     	DateTime endTime = new DateTime(2012, 11, 1, 19, 0, 0);
     	int peakDuration = dC.getPeakDurationSeconds(startTime, endTime);
@@ -140,7 +140,7 @@ public class DurationCalculatorTest {
     
     @Test
     public void testLongOffPeakCallWithShortPeakPeriod() {
-    	IDurationCalculator dC = new DurationCalculator(new DaytimePeakPeriod(22,23));
+    	IDurationCalculator dC = new DurationCalculator(new SinglePeakPeriod(22,23));
     	DateTime startTime = new DateTime(2012, 11, 1, 3, 0, 0);
     	DateTime endTime = new DateTime(2012, 11, 1, 20, 0, 0);
     	int peakDuration = dC.getPeakDurationSeconds(startTime, endTime);
@@ -149,7 +149,7 @@ public class DurationCalculatorTest {
     
     @Test
     public void testOvernightPeakCallOnOneDay() {
-    	IDurationCalculator dC = new DurationCalculator(new DaytimePeakPeriod(21,6));
+    	IDurationCalculator dC = new DurationCalculator(new SinglePeakPeriod(21,6));
     	DateTime startTime = new DateTime(2012, 11, 1, 3, 0, 0);
     	DateTime endTime = new DateTime(2012, 11, 1, 22, 0, 0);
     	int peakDuration = dC.getPeakDurationSeconds(startTime, endTime);

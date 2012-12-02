@@ -28,11 +28,9 @@ public class DurationCalculator implements IDurationCalculator {
         return getPeakDuration(start, end, duration.toStandardDays().getDays());
     }
 
-    // TODO: Clean this method up. Very confusing + hard to read, but works properly now
-    // TODO: Do the clean up AFTER PeakPeriod is changed to use jodatime only.
     private int getPeakDuration(DateTime callStart, DateTime callEnd, int numberOfDays) {
-        int durationOfOneDay = (int) peakPeriod.getPeakPeriodSeconds();
-        Duration duration = new Duration(callStart, callEnd);
+        int durationOfPeakPeriod = (int) peakPeriod.getPeakPeriodSeconds();
+        Duration callDuration = new Duration(callStart, callEnd);
         if (numberOfDays < 1){
         	// On the day the call starts, the start of the peak period
         	DateTime startDayPeakStart = callStart.withTimeAtStartOfDay().plusHours(peakPeriod.getPeakPeriodStart());
@@ -59,7 +57,7 @@ public class DurationCalculator implements IDurationCalculator {
             if (peakPeriod.offPeak(callStart.toDate()) && peakPeriod.offPeak(callEnd.toDate())){
             	// Call starts before a peak period, ends after it
             	if (call.overlaps(firstDayPeak) || call.overlaps(secondDayPeak)){
-            		return durationOfOneDay;
+            		return durationOfPeakPeriod;
             	} 
             	// Call is within an off peak period
             	else {
@@ -69,7 +67,7 @@ public class DurationCalculator implements IDurationCalculator {
             // Call starts in peak, ends in peak
             else if(!peakPeriod.offPeak(callStart.toDate()) && !peakPeriod.offPeak(callEnd.toDate())) {
             	// Call starts in one peak period, ends in another peak period
-            	if (call.overlaps(secondOffPeakInBetweenPeaks) || call.overlaps(firstOffPeakInBetweenPeaks)){
+            	if (call.overlaps(firstOffPeakInBetweenPeaks) || call.overlaps(secondOffPeakInBetweenPeaks)){
             		Duration firstPeakSection;
             		// The call can overlap one of two off peak periods
             		// We test which it overlaps, and set the section accordingly
@@ -84,7 +82,7 @@ public class DurationCalculator implements IDurationCalculator {
             	}
             	// Call starts and ends in the same peak period
             	else {
-            		return (int) duration.getStandardSeconds();
+            		return (int) callDuration.getStandardSeconds();
             	}
             } 
             // Call starts in peak, ends in off-peak OR call starts in off-peak, ends in peak
@@ -117,18 +115,7 @@ public class DurationCalculator implements IDurationCalculator {
             	}
             }
         } else {
-            return durationOfOneDay + getPeakDuration(callStart.plusDays(1), callEnd, numberOfDays - 1);
+            return durationOfPeakPeriod + getPeakDuration(callStart.plusDays(1), callEnd, numberOfDays - 1);
         }
-    }
-
-    private int getDurationSecondsWhenOverlap(int peakPeriod, DateTime date) {
-        Duration peakDuration;
-        if (peakPeriod > date.getHourOfDay()) {
-            peakDuration = new Duration(date, new DateTime(date.withTimeAtStartOfDay()).plusHours(peakPeriod));
-        } else {
-            DateTime nextDayStartPeriod = new DateTime(date.withTimeAtStartOfDay().plusDays(1).plusHours(peakPeriod));
-            peakDuration = new Duration(date, nextDayStartPeriod);
-        }
-        return Math.abs((int) peakDuration.getStandardSeconds());
     }
 }

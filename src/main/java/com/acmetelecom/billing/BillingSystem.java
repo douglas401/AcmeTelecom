@@ -28,7 +28,7 @@ public class BillingSystem {
      * Initialises the BillingSystem with default BillGenerator
      */
     public BillingSystem(){
-        durationCalculator = new DurationCalculator(new DaytimePeakPeriod());
+        durationCalculator = new DurationCalculator(new SinglePeakPeriod());
         billGenerator = new BillGenerator();
     }
 
@@ -37,7 +37,7 @@ public class BillingSystem {
      */
     public BillingSystem(IBillGenerator billGenerator) {
         this.billGenerator = billGenerator;
-        this.durationCalculator = new DurationCalculator(new DaytimePeakPeriod());
+        this.durationCalculator = new DurationCalculator(new SinglePeakPeriod());
     }
 
     /**
