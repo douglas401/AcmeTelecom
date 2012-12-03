@@ -28,7 +28,7 @@ public class TelecomScenarioTest {
     }
 
     @Test
-    public void SingleCallCustomerNotFound() {
+    public void SingleCallNonCustomerFounded() {
         telecom.whileApplicationRuns()
                 .newCallAt(Now())
                 .from("447788888888")
@@ -49,7 +49,7 @@ public class TelecomScenarioTest {
     }
 
     @Test
-    public void MultipleCallsCustomerNotFound() {
+    public void MultipleCallsNonCustomerFounded() {
         telecom.whileApplicationRuns()
                 .newCallAt(Now()).from("447722113434").to("447766511332").forSeconds(20)
                 .newCallAt(Now()).from("447777765432").to("447711111111").forMinutes(4)
@@ -65,9 +65,9 @@ public class TelecomScenarioTest {
     * */
 
 
-    /**
-     * Private functions
-     */
+    /*
+    * Private functions
+    * */
     private long Now() {
         return System.currentTimeMillis();
     }
