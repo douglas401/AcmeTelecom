@@ -62,9 +62,15 @@ public class DurationCalculator implements IDurationCalculator {
             // Call starts in peak, ends in peak
             else if(!peakPeriod.offPeak(callStart.toDate()) && !peakPeriod.offPeak(callEnd.toDate())) {
 
+                // TODO: correction of peak miscalculation, may need refactoring
+                /*
+                 * testOvernightPeakCallOnOneDay(): 1st peak starts 21:00 30/10
+                 * where startDayPeakStart is 21:00 1/11 because callStart.withTimeAtStartOfDay() = 1/11
+                  */
                 if(!firstDayPeak.contains(callStart)){
                     startDayPeakEnd = startDayPeakEnd.minusDays(1);
                 }
+                // call is overnight if the two peaks are not equal
                 Interval offPeakBetweenPeaks = !firstDayPeak.equals(secondDayPeak)
                         ? new Interval(startDayPeakEnd, endDayPeakStart)
                         : new Interval(startDayPeakEnd, endDayPeakStart.plusDays(1));
