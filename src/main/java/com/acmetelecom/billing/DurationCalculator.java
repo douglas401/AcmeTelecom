@@ -46,8 +46,7 @@ public class DurationCalculator implements IDurationCalculator {
     private int getPeakDurationWithinSingleDay(DateTime start, DateTime end) {
         int totalDuration = 0;
         for(PeakPeriod each : peakPeriods){
-             int duration = getPeakDurationWithinSinglePeakBand(start,end,each);
-             totalDuration += duration;
+             totalDuration += getPeakDurationWithinSinglePeakBand(start,end,each);
         }
         return totalDuration;
     }
