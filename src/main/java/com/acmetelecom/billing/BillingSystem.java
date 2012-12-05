@@ -33,7 +33,7 @@ public class BillingSystem {
     }
 
     /**
-     * Initialises the BillingSystem with the passed BillGenerator
+     * Initialises the BillingSystem with the custom BillGenerator
      */
     public BillingSystem(IBillGenerator billGenerator) {
         this.billGenerator = billGenerator;

@@ -1,20 +1,27 @@
 package com.acmetelecom.billing;
 
+import org.apache.commons.lang.time.DateUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
-import org.joda.time.Interval;
+
+import java.util.ArrayList;
 
 public class DurationCalculator implements IDurationCalculator {
     /**
      * The <cref>PeakPeriod</cref> used to get information of peak and off peak period.
      */
-    public PeakPeriod peakPeriod;
+    private ArrayList<PeakPeriod> peakPeriods = new ArrayList<PeakPeriod>();
 
     /**
      * Initializes the DurationCalculator with the defined PeakPeriod
      */
     public DurationCalculator(PeakPeriod peakPeriod) {
-        this.peakPeriod = peakPeriod;
+        this.peakPeriods.add(peakPeriod);
+    }
+
+    public DurationCalculator(OvernightPeakPeriod peakPeriod) {
+        this.peakPeriods.add(peakPeriod.getMorningPeakBand());
+        this.peakPeriods.add(peakPeriod.getEveningPeakBand());
     }
 
     /**
@@ -24,59 +31,51 @@ public class DurationCalculator implements IDurationCalculator {
      * @return The duration of phone call in peak period in seconds.
      */
     public int getPeakDurationSeconds(DateTime start, DateTime end) {
-        Duration duration = new Duration(start, end);
-        return getPeakDuration(start, end, duration.toStandardDays().getDays());
-    }
 
-    private int getPeakDuration(DateTime callStart, DateTime callEnd, int numberOfDays) {
-        int durationOfAPeakPeriod = (int) peakPeriod.getPeakPeriodSeconds();
-        Duration callDuration = new Duration(callStart, callEnd);
-        if (numberOfDays < 1){
-
-        	// peak interval that contains callStart
-            Interval peakIntervalBeforeCallStart = LastPeakIntervalBeforeCallAction(callStart);
-            // peak interval that contains callEnd
-            Interval peakIntervalBeforeCallEnd = LastPeakIntervalBeforeCallAction(callEnd);
-        	
-        	// Call starts in off-peak, ends in off-peak
-            if (peakPeriod.offPeak(callStart.toDate()) && peakPeriod.offPeak(callEnd.toDate())){
-            	// Call never comes across the peak period
-                // Otherwise, call starts before a peak period, through it and ends after it
-            	return peakIntervalBeforeCallStart.equals(peakIntervalBeforeCallEnd) ? 0 : durationOfAPeakPeriod;
-            } 
-            // Call starts in peak, ends in peak
-            else if(!peakPeriod.offPeak(callStart.toDate()) && !peakPeriod.offPeak(callEnd.toDate())) {
-
-                // If the peak intervals are the same, which means call starts and ends at the same peak interval
-                // Otherwise, call starts and ends at different intervals, need to find the off-peak interval in between
-                if(peakIntervalBeforeCallStart.equals(peakIntervalBeforeCallEnd)){
-                    return (int) callDuration.getStandardSeconds();
-                } else {
-                    Duration offPeakDuration = new Duration(peakIntervalBeforeCallStart.getEnd(), peakIntervalBeforeCallEnd.getStart());
-                    return (int) (callDuration.getStandardSeconds() - offPeakDuration.getStandardSeconds());
-            	}
-            } else {
-                // Intervals equal to each other means the call starts in off-peak, ends in peak.
-                // Otherwise starts in peak, and ends in off-peak
-                Duration peakDuration = peakIntervalBeforeCallStart.equals(peakIntervalBeforeCallEnd)
-                        ? new Duration(callStart, peakIntervalBeforeCallStart.getEnd())
-                        :new Duration(peakIntervalBeforeCallEnd.getStart(), callEnd);
-                return (int) peakDuration.getStandardSeconds();
-            }
-        } else {
-            return durationOfAPeakPeriod + getPeakDuration(callStart.plusDays(1), callEnd, numberOfDays - 1);
+        int durationForFirstDay;
+        if(DateUtils.isSameDay(start.toDate(), end.toDate())){
+            durationForFirstDay = getPeakDurationWithinSingleDay(start,end);
+            return durationForFirstDay;
+        }else{
+            DateTime startOfNextDay = start.withTimeAtStartOfDay().plusDays(1);
+            durationForFirstDay = getPeakDurationWithinSingleDay(start,startOfNextDay);
+            return durationForFirstDay + getPeakDurationSeconds(startOfNextDay, end);
         }
     }
 
-    /*
-    * Return there is an peak interval that contains the date.
-    * Otherwise, return the last peak interval, just before the date.
-    * */
-    private Interval LastPeakIntervalBeforeCallAction(DateTime date) {
-        DateTime start = date.getHourOfDay() < peakPeriod.getPeakPeriodStart()
-                ? date.withTimeAtStartOfDay().minusDays(1).plusHours(peakPeriod.getPeakPeriodStart())
-                : date.withTimeAtStartOfDay().plusHours(peakPeriod.getPeakPeriodStart());
-        DateTime end = start.plusHours(peakPeriod.getPeakPeriodHours());
-        return new Interval(start, end);
+    private int getPeakDurationWithinSingleDay(DateTime start, DateTime end) {
+        int totalDuration = 0;
+        for(PeakPeriod each : peakPeriods){
+             int duration = getPeakDurationWithinSinglePeakBand(start,end,each);
+             totalDuration += duration;
+        }
+        return totalDuration;
     }
+
+    private int getPeakDurationWithinSinglePeakBand(DateTime start, DateTime end, PeakPeriod peakBand) {
+        DateTime peakStart = start.withTimeAtStartOfDay().plusHours(peakBand.getPeakPeriodStart());
+        DateTime peakEnd   = start.withTimeAtStartOfDay().plusHours(peakBand.getPeakPeriodEnd());
+
+        if(start.isAfter(peakEnd) || end.isBefore(peakStart)){
+           return 0;
+        }
+
+        // at this stage, start must before the peakEnd and end must after peakStart, so must be within peak
+        Duration nonPeakDuration = new Duration(start, peakStart);
+        Duration nonPeakDuration2 = new Duration(peakEnd, end);
+
+        int nonPeak1 = (int)nonPeakDuration.getStandardSeconds();
+        int nonPeak2 = (int)nonPeakDuration2.getStandardSeconds();
+
+        if(nonPeak1 < 0){
+            nonPeak1 = 0;
+        }
+        if(nonPeak2 < 0){
+            nonPeak2 = 0;
+        }
+        Duration totalDuration = new Duration(start, end);
+        return (int)totalDuration.getStandardSeconds() - nonPeak1 - nonPeak2;
+    }
+
+
 }
