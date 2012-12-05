@@ -33,15 +33,25 @@ import java.util.Map;
 public class BillingSystemTest {
     Mockery context = new Mockery();
 
-    @Test
-    public void testCreateCustomerBills(){
-        //use privateAccessor to inject our Mock into billingsystem
-        BillingSystem billingSystem = new BillingSystem();
-        final IDurationCalculator durationCalculator = context.mock(IDurationCalculator.class);
-        final CustomerDatabase customerDatabase = context.mock(CustomerDatabase.class);
+    BillingSystem billingSystem = new BillingSystem();
+    final IDurationCalculator durationCalculator = context.mock(IDurationCalculator.class);
+    final CustomerDatabase customerDatabase = context.mock(CustomerDatabase.class);
+    final IBillGenerator billGenerator = context.mock(IBillGenerator.class);
+    final TariffLibrary tariffDatabase = context.mock(TariffLibrary.class);
 
-        final IBillGenerator billGenerator = context.mock(IBillGenerator.class);
-        final TariffLibrary tariffDatabase = context.mock(TariffLibrary.class);
+    // set up customers
+    final Customer customerA = new Customer("A","447711111111","Standard");
+    final Customer customerB = new Customer("B","447722222222","Business");
+    final Customer customerC = new Customer("C","447733333333","Business");
+
+    @Test
+    public void setUp(){
+
+    }
+
+    @Test
+    public void testStandardCustomerBills(){
+        //use privateAccessor to inject mock objects into BillingSystem
         try {
             PrivateAccessor.setField(billingSystem, "durationCalculator", durationCalculator);
             PrivateAccessor.setField(billingSystem, "billGenerator", billGenerator);
@@ -51,22 +61,14 @@ public class BillingSystemTest {
             e.printStackTrace();
         }
 
-        // set up customers#
+        // set up customers
         final List<Customer> customers = new ArrayList<Customer>(){};
-        // customer A
-        final Customer customerA = new Customer("A","447711111111","Standard");
         customers.add(customerA);
-        final Customer customerB = new Customer("B","447722222222","Business");
-        customers.add(customerB);
-        final Customer customerC = new Customer("C","447733333333","Business");
-        customers.add(customerC);
 
         // mocking customer database and tariff database
         context.checking(new Expectations() {{
             allowing(customerDatabase).getCustomers();will(returnValue(customers));
             allowing(tariffDatabase).tarriffFor(customerA);will(returnValue(Tariff.Standard));
-            allowing(tariffDatabase).tarriffFor(customerB);will(returnValue(Tariff.Business));
-            allowing(tariffDatabase).tarriffFor(customerC);will(returnValue(Tariff.Standard));
         }});
 
         // set up phone calls
@@ -106,6 +108,56 @@ public class BillingSystemTest {
             e.printStackTrace();
         }
 
+        // mocking duration calculations
+        context.checking(new Expectations() {{
+            allowing(durationCalculator).getPeakDurationSeconds(with(isTimeMatches(callTime1)),with(isTimeMatches(callTime1.plusMinutes(1))));
+            will(returnValue(60));
+            allowing(durationCalculator).getPeakDurationSeconds(with(isTimeMatches(callTime2)),with(isTimeMatches(callTime2.plusMinutes(15))));
+            will(returnValue(0));
+            allowing(durationCalculator).getPeakDurationSeconds(with(isTimeMatches(callTime3)),with(isTimeMatches(callTime3.plusHours(1))));
+            will(returnValue(60*60));
+        }});
+
+        // set up bills
+        // bill for customerA
+        final BigDecimal totalBillA = (
+                new BigDecimal(60).multiply(tariffDatabase.tarriffFor(customerA).peakRate()).
+                        add(new BigDecimal(60*15).multiply(tariffDatabase.tarriffFor(customerA).offPeakRate())).
+                        add(new BigDecimal(60*60).multiply(tariffDatabase.tarriffFor(customerA).peakRate()))
+        ).setScale(0, RoundingMode.HALF_UP);
+        final String totalBillForA =  MoneyFormatter.penceToPounds(totalBillA);
+
+        // set up test conditions for method send()
+        context.checking(new Expectations() {{
+            oneOf(billGenerator).send(with(isCustomerMatches(customerA)), with(any(List.class)), with(equal(totalBillForA)));
+        }});
+
+        billingSystem.createCustomerBills();
+    }
+
+    public void testBusinessCustomerBills(){
+        //use privateAccessor to inject mock objects into BillingSystem
+        try {
+            PrivateAccessor.setField(billingSystem, "durationCalculator", durationCalculator);
+            PrivateAccessor.setField(billingSystem, "billGenerator", billGenerator);
+            PrivateAccessor.setField(billingSystem, "customerDatabase", customerDatabase);
+            PrivateAccessor.setField(billingSystem, "tariffDatabase", tariffDatabase);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+
+        // set up customers
+        final List<Customer> customers = new ArrayList<Customer>(){};
+        customers.add(customerB);
+
+        // mocking customer database and tariff database
+        context.checking(new Expectations() {{
+            allowing(customerDatabase).getCustomers();will(returnValue(customers));
+            allowing(tariffDatabase).tarriffFor(customerB);will(returnValue(Tariff.Business));
+        }});
+
+        // set up phone calls
+        final Map<String, List<CallEvent>> callLogMap = new HashMap<String, List<CallEvent>>();
         // phone calls for customer B
         List<CallEvent> phoneCallsB = new ArrayList<CallEvent>();
         final DateTime callTime4 = new DateTime(2012, 11, 2, 8, 5, 0);
@@ -121,41 +173,59 @@ public class BillingSystemTest {
         phoneCallsB.add(callEnd4);
         callLogMap.put(customerB.getPhoneNumber(), phoneCallsB);
 
-        // phone calls for customer C
-        List<CallEvent> phoneCallsC = new ArrayList<CallEvent>();
-        callLogMap.put(customerC.getPhoneNumber(), phoneCallsC);
-
         // mocking duration calculations
         context.checking(new Expectations() {{
-            allowing(durationCalculator).getPeakDurationSeconds(with(isTimeMatches(callTime1)),with(isTimeMatches(callTime1.plusMinutes(1))));
-            will(returnValue(60));
-            allowing(durationCalculator).getPeakDurationSeconds(with(isTimeMatches(callTime2)),with(isTimeMatches(callTime2.plusMinutes(15))));
-            will(returnValue(0));
-            allowing(durationCalculator).getPeakDurationSeconds(with(isTimeMatches(callTime3)),with(isTimeMatches(callTime3.plusHours(1))));
-            will(returnValue(60*60));
             allowing(durationCalculator).getPeakDurationSeconds(with(isTimeMatches(callTime4)),with(isTimeMatches(callTime4.plusMinutes(3))));
             will(returnValue(3*60));
         }});
 
         // set up bills
-        // bill for customerA
-        final BigDecimal totalBillA = (
-                new BigDecimal(60).multiply(tariffDatabase.tarriffFor(customerA).peakRate()).
-                    add(new BigDecimal(60*15).multiply(tariffDatabase.tarriffFor(customerA).offPeakRate())).
-                    add(new BigDecimal(60*60).multiply(tariffDatabase.tarriffFor(customerA).peakRate()))
-                ).setScale(0, RoundingMode.HALF_UP);
-        final String totalBillForA =  MoneyFormatter.penceToPounds(totalBillA);
-
+        // bills for customer B
         final BigDecimal totalBillB = (
                 new BigDecimal(3*60).multiply(tariffDatabase.tarriffFor(customerB).peakRate())).setScale(0, RoundingMode.HALF_UP);
         final String totalBillForB =  MoneyFormatter.penceToPounds(totalBillB);
 
+        // set up test conditions for method send()
+        context.checking(new Expectations() {{
+            oneOf(billGenerator).send(with(isCustomerMatches(customerB)), with(any(List.class)), with(equal(totalBillForB)));
+        }});
+
+        billingSystem.createCustomerBills();
+    }
+
+    public void testZeroCustomerBills(){
+        //use privateAccessor to inject mock objects into BillingSystem
+        try {
+            PrivateAccessor.setField(billingSystem, "durationCalculator", durationCalculator);
+            PrivateAccessor.setField(billingSystem, "billGenerator", billGenerator);
+            PrivateAccessor.setField(billingSystem, "customerDatabase", customerDatabase);
+            PrivateAccessor.setField(billingSystem, "tariffDatabase", tariffDatabase);
+        } catch (NoSuchFieldException e) {
+            e.printStackTrace();
+        }
+
+        // set up customers
+        final List<Customer> customers = new ArrayList<Customer>(){};
+        customers.add(customerC);
+
+        // mocking customer database and tariff database
+        context.checking(new Expectations() {{
+            allowing(customerDatabase).getCustomers();will(returnValue(customers));
+            allowing(tariffDatabase).tarriffFor(customerC);will(returnValue(Tariff.Standard));
+        }});
+
+        // set up phone calls
+        final Map<String, List<CallEvent>> callLogMap = new HashMap<String, List<CallEvent>>();
+        // phone calls for customer C
+        List<CallEvent> phoneCallsC = new ArrayList<CallEvent>();
+        callLogMap.put(customerC.getPhoneNumber(), phoneCallsC);
+
+        // set up bills
+        // bills for customer C
         final String totalBillForC =  MoneyFormatter.penceToPounds(new BigDecimal(0));
 
         // set up test conditions for method send()
         context.checking(new Expectations() {{
-            oneOf(billGenerator).send(with(isCustomerMatches(customerA)), with(any(List.class)), with(equal(totalBillForA)));
-            oneOf(billGenerator).send(with(isCustomerMatches(customerB)), with(any(List.class)), with(equal(totalBillForB)));
             oneOf(billGenerator).send(with(isCustomerMatches(customerC)), with(any(List.class)), with(equal(totalBillForC)));
         }});
 
