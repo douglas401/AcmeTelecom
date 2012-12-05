@@ -1,8 +1,13 @@
 package com.acmetelecom.acceptance;
 
+import org.joda.time.DateTime;
 import org.junit.Test;
 
 public class TelecomScenarioTest {
+    public static final DateTime StartOfDay = new DateTime(2012, 11, 1, 0, 0, 0);
+    public static final DateTime StartOfPeak = StartOfDay.plusHours(7);
+    public static final DateTime EndOfPeak = StartOfPeak.plusHours(12);
+
     TelecomTestContext telecom = new TelecomTestContext();
 
     /*
@@ -18,7 +23,7 @@ public class TelecomScenarioTest {
     @Test
     public void SingleCall() {
         telecom.whileApplicationRuns()
-                .newCallAt(Now())
+                .newCallAt(StartOfDay)
                 .from("447722113434")
                 .to("447766511332")
                 .forSeconds(20)
@@ -30,7 +35,7 @@ public class TelecomScenarioTest {
     @Test
     public void SingleCallNonCustomerFounded() {
         telecom.whileApplicationRuns()
-                .newCallAt(Now())
+                .newCallAt(StartOfDay)
                 .from("447788888888")
                 .to("447722113434")
                 .forSeconds(30)
@@ -41,9 +46,9 @@ public class TelecomScenarioTest {
     @Test
     public void MultipleCalls() {
         telecom.whileApplicationRuns()
-                .newCallAt(Now()).from("447722113434").to("447766511332").forSeconds(20)
-                .newCallAt(Now()).from("447777765432").to("447711111111").forSeconds(40)
-                .newCallAt(Now()).from("447722113434").to("447711111111").forMinutes(3)
+                .newCallAt(StartOfDay).from("447722113434").to("447766511332").forSeconds(20)
+                .newCallAt(StartOfDay).from("447777765432").to("447711111111").forSeconds(40)
+                .newCallAt(StartOfDay).from("447722113434").to("447711111111").forMinutes(3)
                 .afterGeneratingBills()
                 .expectTotalNumberOfCalls(3);
     }
@@ -51,9 +56,9 @@ public class TelecomScenarioTest {
     @Test
     public void MultipleCallsNonCustomerFounded() {
         telecom.whileApplicationRuns()
-                .newCallAt(Now()).from("447722113434").to("447766511332").forSeconds(20)
-                .newCallAt(Now()).from("447777765432").to("447711111111").forMinutes(4)
-                .newCallAt(Now()).from("447722222222").to("447711111111").forSeconds(30)
+                .newCallAt(StartOfDay).from("447722113434").to("447766511332").forSeconds(20)
+                .newCallAt(StartOfDay).from("447777765432").to("447711111111").forMinutes(4)
+                .newCallAt(StartOfDay).from("447722222222").to("447711111111").forSeconds(30)
                 .afterGeneratingBills()
                 .expectTotalNumberOfCalls(2)
                 .expectBillOnPhoneNumber("447722113434")
@@ -63,13 +68,4 @@ public class TelecomScenarioTest {
     /*
     * Tests to determine peak/off-peak duration
     * */
-
-
-    /*
-    * Private functions
-    * */
-    private long Now() {
-        return System.currentTimeMillis();
-    }
-
 }
