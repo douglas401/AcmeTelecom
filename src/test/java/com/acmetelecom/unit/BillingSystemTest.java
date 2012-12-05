@@ -84,12 +84,15 @@ public class BillingSystemTest {
         // set up phone calls
         // phone calls for customer A, assume peak period is 7-19 everyday
         List<CallEvent> phoneCallsA = new ArrayList<CallEvent>();
+        // peak call
         final DateTime callTime1 = new DateTime(2012, 11, 1, 7, 5, 0);
         CallStart callStart1 = new CallStart(customerA.getPhoneNumber(), customerB.getPhoneNumber());
         CallEnd callEnd1 = new CallEnd(customerA.getPhoneNumber(), customerB.getPhoneNumber());
+        // off peak call
         final DateTime callTime2 = new DateTime(2012, 11, 1, 19, 25, 0);
         CallStart callStart2 = new CallStart(customerA.getPhoneNumber(), customerB.getPhoneNumber());
         CallEnd callEnd2 = new CallEnd(customerA.getPhoneNumber(), customerB.getPhoneNumber());
+        // peak call
         final DateTime callTime3 = new DateTime(2012, 11, 1, 12, 12, 0);
         CallStart callStart3 = new CallStart(customerA.getPhoneNumber(), customerC.getPhoneNumber());
         CallEnd callEnd3 = new CallEnd(customerA.getPhoneNumber(), customerC.getPhoneNumber());
