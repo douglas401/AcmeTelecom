@@ -113,7 +113,7 @@ public class DurationCalculatorTest {
     
     @Test
     // Test peak duration overnight with a new setting of short peak period from 10am - 4pm
-    public void testPeaktoPeakOvernightWithShortPeak() {
+    public void testPeakToPeakOvernightWithShortPeak() {
         IDurationCalculator dC = new DurationCalculator(new SinglePeakPeriod(10,16));
         DateTime startTime = new DateTime(2012, 11, 1, 15, 0, 0);
         DateTime endTime = new DateTime(2012, 11, 2, 11, 0, 0);
