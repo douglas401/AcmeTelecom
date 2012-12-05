@@ -19,6 +19,7 @@ import org.jmock.Expectations;
 import org.jmock.Mockery;
 import org.jmock.integration.junit4.JMock;
 import org.joda.time.DateTime;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -43,36 +44,41 @@ public class BillingSystemTest {
     final Customer customerA = new Customer("A","447711111111","Standard");
     final Customer customerB = new Customer("B","447722222222","Business");
     final Customer customerC = new Customer("C","447733333333","Business");
+    final List<Customer> customers = new ArrayList<Customer>(){};
 
-    @Test
+    // set up phone calls
+    final Map<String, List<CallEvent>> callLogMap = new HashMap<String, List<CallEvent>>();
+
+    @Before
     public void setUp(){
-
-    }
-
-    @Test
-    public void testStandardCustomerBills(){
         //use privateAccessor to inject mock objects into BillingSystem
         try {
             PrivateAccessor.setField(billingSystem, "durationCalculator", durationCalculator);
             PrivateAccessor.setField(billingSystem, "billGenerator", billGenerator);
             PrivateAccessor.setField(billingSystem, "customerDatabase", customerDatabase);
             PrivateAccessor.setField(billingSystem, "tariffDatabase", tariffDatabase);
+            PrivateAccessor.setField(billingSystem, "callLogMap", callLogMap);
         } catch (NoSuchFieldException e) {
             e.printStackTrace();
         }
 
+        context.checking(new Expectations() {{
+            allowing(customerDatabase).getCustomers();will(returnValue(customers));
+        }});
+    }
+
+    @Test
+    public void testStandardCustomerBills(){
         // set up customers
-        final List<Customer> customers = new ArrayList<Customer>(){};
+        customers.clear();
         customers.add(customerA);
 
         // mocking customer database and tariff database
         context.checking(new Expectations() {{
-            allowing(customerDatabase).getCustomers();will(returnValue(customers));
             allowing(tariffDatabase).tarriffFor(customerA);will(returnValue(Tariff.Standard));
         }});
 
         // set up phone calls
-        final Map<String, List<CallEvent>> callLogMap = new HashMap<String, List<CallEvent>>();
         // phone calls for customer A
         List<CallEvent> phoneCallsA = new ArrayList<CallEvent>();
         final DateTime callTime1 = new DateTime(2012, 11, 1, 7, 5, 0);
@@ -100,13 +106,8 @@ public class BillingSystemTest {
         phoneCallsA.add(callEnd2);
         phoneCallsA.add(callStart3);
         phoneCallsA.add(callEnd3);
+        callLogMap.clear();
         callLogMap.put(customerA.getPhoneNumber(), phoneCallsA);
-
-        try {
-            PrivateAccessor.setField(billingSystem, "callLogMap", callLogMap);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        }
 
         // mocking duration calculations
         context.checking(new Expectations() {{
@@ -135,29 +136,18 @@ public class BillingSystemTest {
         billingSystem.createCustomerBills();
     }
 
+    @Test
     public void testBusinessCustomerBills(){
-        //use privateAccessor to inject mock objects into BillingSystem
-        try {
-            PrivateAccessor.setField(billingSystem, "durationCalculator", durationCalculator);
-            PrivateAccessor.setField(billingSystem, "billGenerator", billGenerator);
-            PrivateAccessor.setField(billingSystem, "customerDatabase", customerDatabase);
-            PrivateAccessor.setField(billingSystem, "tariffDatabase", tariffDatabase);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        }
-
         // set up customers
-        final List<Customer> customers = new ArrayList<Customer>(){};
+        customers.clear();
         customers.add(customerB);
 
         // mocking customer database and tariff database
         context.checking(new Expectations() {{
-            allowing(customerDatabase).getCustomers();will(returnValue(customers));
             allowing(tariffDatabase).tarriffFor(customerB);will(returnValue(Tariff.Business));
         }});
 
         // set up phone calls
-        final Map<String, List<CallEvent>> callLogMap = new HashMap<String, List<CallEvent>>();
         // phone calls for customer B
         List<CallEvent> phoneCallsB = new ArrayList<CallEvent>();
         final DateTime callTime4 = new DateTime(2012, 11, 2, 8, 5, 0);
@@ -171,6 +161,7 @@ public class BillingSystemTest {
         }
         phoneCallsB.add(callStart4);
         phoneCallsB.add(callEnd4);
+        callLogMap.clear();
         callLogMap.put(customerB.getPhoneNumber(), phoneCallsB);
 
         // mocking duration calculations
@@ -193,31 +184,21 @@ public class BillingSystemTest {
         billingSystem.createCustomerBills();
     }
 
+    @Test
     public void testZeroCustomerBills(){
-        //use privateAccessor to inject mock objects into BillingSystem
-        try {
-            PrivateAccessor.setField(billingSystem, "durationCalculator", durationCalculator);
-            PrivateAccessor.setField(billingSystem, "billGenerator", billGenerator);
-            PrivateAccessor.setField(billingSystem, "customerDatabase", customerDatabase);
-            PrivateAccessor.setField(billingSystem, "tariffDatabase", tariffDatabase);
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        }
-
         // set up customers
-        final List<Customer> customers = new ArrayList<Customer>(){};
+        customers.clear();
         customers.add(customerC);
 
         // mocking customer database and tariff database
         context.checking(new Expectations() {{
-            allowing(customerDatabase).getCustomers();will(returnValue(customers));
             allowing(tariffDatabase).tarriffFor(customerC);will(returnValue(Tariff.Standard));
         }});
 
         // set up phone calls
-        final Map<String, List<CallEvent>> callLogMap = new HashMap<String, List<CallEvent>>();
         // phone calls for customer C
         List<CallEvent> phoneCallsC = new ArrayList<CallEvent>();
+        callLogMap.clear();
         callLogMap.put(customerC.getPhoneNumber(), phoneCallsC);
 
         // set up bills
