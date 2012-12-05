@@ -43,6 +43,12 @@ public class DurationCalculator implements IDurationCalculator {
         }
     }
 
+    /**
+     * Gets the length of phone call that takes place during a single day period.
+     * @param start The start time of phone call.
+     * @param end   The end time of phone call.
+     * @return The duration of phone call in peak period in seconds.
+     */
     private int getPeakDurationWithinSingleDay(DateTime start, DateTime end) {
         int totalDuration = 0;
         for(PeakPeriod each : peakPeriods){
@@ -52,6 +58,12 @@ public class DurationCalculator implements IDurationCalculator {
         return totalDuration;
     }
 
+    /**
+     * Gets the length of phone call that takes place during a single day period as well as a single peak band.
+     * @param start The start time of phone call.
+     * @param end   The end time of phone call.
+     * @return The duration of phone call in peak period in seconds.
+     */
     private int getPeakDurationWithinSinglePeakBand(DateTime start, DateTime end, PeakPeriod peakBand) {
         DateTime peakStart = start.withTimeAtStartOfDay().plusHours(peakBand.getPeakPeriodStart());
         DateTime peakEnd   = start.withTimeAtStartOfDay().plusHours(peakBand.getPeakPeriodEnd());
