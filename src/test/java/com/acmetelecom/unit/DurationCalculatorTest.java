@@ -16,6 +16,7 @@ public class DurationCalculatorTest {
     IDurationCalculator defaultDC = new DurationCalculator(new SinglePeakPeriod(7, 19));
 
     @Test
+    // Test peak duration across 2 days
     public void testTwoDaysDuration() {
         DateTime startTime = new DateTime(2012, 11, 1, 18, 0, 0);
         DateTime endTime = startTime.plusDays(2);
@@ -24,6 +25,7 @@ public class DurationCalculatorTest {
     }
 
     @Test
+    // Test off peak durations during a day
     public void testOffPeak() {
         DateTime startTime = new DateTime(2012, 11, 1, 19, 30, 0);
         DateTime endTime = startTime.plusMinutes(5);
@@ -38,6 +40,7 @@ public class DurationCalculatorTest {
     }
 
     @Test
+    // Test peak duration cross over off peak
     public void testOffPeakOverPeakPeriod() {
         DateTime startTime = new DateTime(2012, 11, 1, 6, 30, 0);
         DateTime endTime = startTime.plusHours(14);
@@ -46,6 +49,7 @@ public class DurationCalculatorTest {
     }
 
     @Test
+    // Test simple 10mins peak period
     public void testPeakPeriod() {
         DateTime startTime = new DateTime(2012, 11, 1, 8, 30, 0);
         DateTime endTime = startTime.plusMinutes(10);
@@ -54,6 +58,7 @@ public class DurationCalculatorTest {
     }
 
     @Test
+    // Test off peak period over night, crossing peak period on next day
     public void testPeakPeriodOverNight() {
         DateTime startTime = new DateTime(2012, 11, 1, 18, 0, 0);
         DateTime endTime = startTime.plusHours(14);
@@ -62,6 +67,7 @@ public class DurationCalculatorTest {
     }
 
     @Test
+    // Test peak duration start from an off peak time
     public void testOffPeakToPeak() {
         DateTime startTime = new DateTime(2012, 11, 1, 22, 0, 0);
         DateTime endTime = startTime.plusHours(14);
@@ -70,6 +76,7 @@ public class DurationCalculatorTest {
     }
 
     @Test
+    // Test peak duration end with an off peak time
     public void testPeakToOffPeak() {
         DateTime startTime = new DateTime(2012, 11, 1, 16, 0, 0);
         DateTime endTime = startTime.plusHours(5);
@@ -84,6 +91,7 @@ public class DurationCalculatorTest {
     }
     
     @Test
+    // Test peak duration with a new set of long peak period from 2am - 11pm
     public void testOvernightAndLongPeak() {
         IDurationCalculator dC = new DurationCalculator(new SinglePeakPeriod(2,23));
         DateTime startTime = new DateTime(2012, 11, 1, 22, 0, 0);
@@ -93,6 +101,7 @@ public class DurationCalculatorTest {
     }
     
     @Test
+    // Test peak duration with a new setting of long peak period from 2am - 11pm
     public void testOffPeakToOffPeakThroughPeak() {
     	PeakPeriod peakPeriod = new SinglePeakPeriod(10,16);
         IDurationCalculator dC = new DurationCalculator(peakPeriod);
@@ -103,6 +112,7 @@ public class DurationCalculatorTest {
     }
     
     @Test
+    // Test peak duration overnight with a new setting of short peak period from 10am - 4pm
     public void testPeakToPeakOvernightWithShortPeak() {
         IDurationCalculator dC = new DurationCalculator(new SinglePeakPeriod(10,16));
         DateTime startTime = new DateTime(2012, 11, 1, 15, 0, 0);
@@ -112,6 +122,7 @@ public class DurationCalculatorTest {
     }
     
     @Test
+    // Test peak duration overnight with new setting of peak period from 8pm - 5am
     public void testPeakPeriodGoesThroughMidnight() {
     	IDurationCalculator dC = new DurationCalculator(new SinglePeakPeriod(20,5));
     	DateTime startTime = new DateTime(2012, 11, 1, 21, 0, 0);
@@ -121,6 +132,7 @@ public class DurationCalculatorTest {
     }
     
     @Test
+    // Test peak duration overnight end with off peak with new setting of peak period from 8pm - 5am
     public void testPeakPeriodGoesThroughMidnightCallFromPeakToOff() {
     	IDurationCalculator dC = new DurationCalculator(new SinglePeakPeriod(20,5));
     	DateTime startTime = new DateTime(2012, 11, 1, 21, 0, 0);
@@ -130,6 +142,7 @@ public class DurationCalculatorTest {
     }
     
     @Test
+    // Test off peak duration overnight with new setting of peak period from 8pm - 5am
     public void testPeakPeriodGoesThroughMidnightCallFromOffToOff() {
     	IDurationCalculator dC = new DurationCalculator(new SinglePeakPeriod(20,5));
     	DateTime startTime = new DateTime(2012, 11, 1, 6, 0, 0);
@@ -139,6 +152,7 @@ public class DurationCalculatorTest {
     }
     
     @Test
+    // Test off peak duration with a very short peak period from 10pm - 11pm
     public void testLongOffPeakCallWithShortPeakPeriod() {
     	IDurationCalculator dC = new DurationCalculator(new SinglePeakPeriod(22,23));
     	DateTime startTime = new DateTime(2012, 11, 1, 3, 0, 0);
@@ -148,6 +162,7 @@ public class DurationCalculatorTest {
     }
     
     @Test
+    // Test peak duration through a day with new setting of peak period from 9pm - 6am
     public void testOvernightPeakCallOnOneDay() {
     	IDurationCalculator dC = new DurationCalculator(new SinglePeakPeriod(21,6));
     	DateTime startTime = new DateTime(2012, 11, 1, 3, 0, 0);
