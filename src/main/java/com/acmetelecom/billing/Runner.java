@@ -4,7 +4,7 @@ package com.acmetelecom.billing;
 public class Runner {
     public static void main(String[] args) throws Exception {
         System.out.println("Running...");
-        BillingSystem billingSystem = new BillingSystem(new BillGenerator());
+        BillingSystem billingSystem = new BillingSystem();
         billingSystem.callInitiated("447722113434", "447766511332");
         sleepSeconds(20);
         billingSystem.callCompleted("447722113434", "447766511332");

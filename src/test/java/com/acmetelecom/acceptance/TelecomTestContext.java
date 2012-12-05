@@ -1,6 +1,7 @@
 package com.acmetelecom.acceptance;
 
 import com.acmetelecom.billing.BillingSystem;
+import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
 
 public class TelecomTestContext {
@@ -13,8 +14,8 @@ public class TelecomTestContext {
         return this;
 	}
 
-	public TestCallEvent newCallAt(long start){
-        return new TestCallEvent(this, start);
+	public TestCallEvent newCallAt(DateTime start){
+        return new TestCallEvent(this, start.getMillis());
     }
 
     public TelecomTestContext addToCallLog(TestCallEvent testCallEvent) {
