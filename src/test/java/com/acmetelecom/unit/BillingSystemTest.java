@@ -67,6 +67,9 @@ public class BillingSystemTest {
         }});
     }
 
+    /**
+     * Tests the total bill generated for a Standard customer
+     */
     @Test
     public void testStandardCustomerBills(){
         // set up customers
@@ -79,7 +82,7 @@ public class BillingSystemTest {
         }});
 
         // set up phone calls
-        // phone calls for customer A
+        // phone calls for customer A, assume peak period is 7-19 everyday
         List<CallEvent> phoneCallsA = new ArrayList<CallEvent>();
         final DateTime callTime1 = new DateTime(2012, 11, 1, 7, 5, 0);
         CallStart callStart1 = new CallStart(customerA.getPhoneNumber(), customerB.getPhoneNumber());
@@ -136,6 +139,9 @@ public class BillingSystemTest {
         billingSystem.createCustomerBills();
     }
 
+    /**
+     * Tests the total bill generated for a Business customer
+     */
     @Test
     public void testBusinessCustomerBills(){
         // set up customers
@@ -148,7 +154,7 @@ public class BillingSystemTest {
         }});
 
         // set up phone calls
-        // phone calls for customer B
+        // phone calls for customer B, assume peak period is 7-19 everyday
         List<CallEvent> phoneCallsB = new ArrayList<CallEvent>();
         final DateTime callTime4 = new DateTime(2012, 11, 2, 8, 5, 0);
         CallStart callStart4 = new CallStart(customerB.getPhoneNumber(), customerC.getPhoneNumber());
@@ -184,6 +190,9 @@ public class BillingSystemTest {
         billingSystem.createCustomerBills();
     }
 
+    /**
+     * Tests a customer with no phone call, a bill of zero pounds generated
+     */
     @Test
     public void testZeroCustomerBills(){
         // set up customers
