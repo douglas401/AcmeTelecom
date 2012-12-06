@@ -62,7 +62,12 @@ public class TelecomScenarioTest {
                 .afterGeneratingBills()
                 .expectTotalNumberOfCalls(2)
                 .expectBillOnPhoneNumber("447722113434")
-                .expectBillOnPhoneNumber("447777765432");
+                .call(1).toNumber("447766511332").lastedInMinutes("0:20").cost("6")
+                .noOtherBillItemForThisPhoneNumber()
+                .expectBillOnPhoneNumber("447777765432")
+                .call(1).toNumber("447711111111").lastedInMinutes("4:00").cost("48")
+                .noOtherBillItemForThisPhoneNumber()
+                .noOtherCustomerGettingChargedAnything();
     }
 
     /*
@@ -70,14 +75,87 @@ public class TelecomScenarioTest {
     * */
 
     @Test
-    public void SingleCallAtPeakTime() {
+    public void SingleCallAtPeakTimeBusinessTariff() {
         telecom.whileApplicationRuns()
                 .newCallAt(StartOfPeak)
                 .from("447722113434")
                 .to("447766511332")
-                .forSeconds(20)
+                .forMinutes(20)
                 .afterGeneratingBills()
-                .expectTotalNumberOfCalls(1)
-                .expectBillOnPhoneNumber("447722113434");
-               // TODO: .expectBillWithPrice("");
-    } }
+                .expectBillOnPhoneNumber("447722113434")
+                .call(1).toNumber("447766511332").lastedInMinutes("20:00").cost("360")
+                .noOtherBillItemForThisPhoneNumber()
+                .noOtherCustomerGettingChargedAnything();
+    }
+
+    @Test
+    public void SingleCallAtOffPeakTimeBusinessTariff() {
+        telecom.whileApplicationRuns()
+                .newCallAt(EndOfPeak)
+                .from("447722113434")
+                .to("447766511332")
+                .forMinutes(20)
+                .afterGeneratingBills()
+                .expectBillOnPhoneNumber("447722113434")
+                .call(1).toNumber("447766511332").lastedInMinutes("20:00").cost("360")
+                .noOtherBillItemForThisPhoneNumber()
+                .noOtherCustomerGettingChargedAnything();
+    }
+
+    @Test
+    public void SingleCallAtMixedTimeBusinessTariff() {
+        telecom.whileApplicationRuns()
+                .newCallAt(EndOfPeak.minusMinutes(10))
+                .from("447722113434")
+                .to("447766511332")
+                .forMinutes(20)
+                .afterGeneratingBills()
+                .expectBillOnPhoneNumber("447722113434")
+                .call(1).toNumber("447766511332").lastedInMinutes("20:00").cost("360")
+                .noOtherBillItemForThisPhoneNumber()
+                .noOtherCustomerGettingChargedAnything();
+    }
+
+    @Test
+    public void SingleCallAtPeakTime() {
+        telecom.whileApplicationRuns()
+                .newCallAt(StartOfPeak)
+                .from("447721232123")
+                .to("447766511332")
+                .forMinutes(20)
+                .afterGeneratingBills()
+                .expectBillOnPhoneNumber("447721232123")
+                .call(1).toNumber("447766511332").lastedInMinutes("20:00").cost("600")
+                .noOtherBillItemForThisPhoneNumber()
+                .noOtherCustomerGettingChargedAnything();
+    }
+
+    @Test
+    public void SingleCallAtOffPeakTime() {
+        telecom.whileApplicationRuns()
+                .newCallAt(EndOfPeak)
+                .from("447721232123")
+                .to("447766511332")
+                .forMinutes(20)
+                .afterGeneratingBills()
+                .expectBillOnPhoneNumber("447721232123")
+                .call(1).toNumber("447766511332").lastedInMinutes("20:00").cost("240")
+                .noOtherBillItemForThisPhoneNumber()
+                .noOtherCustomerGettingChargedAnything();
+    }
+
+    @Test
+    public void SingleCallAtMixedTime() {
+        telecom.whileApplicationRuns()
+                .newCallAt(EndOfPeak.minusMinutes(10))
+                .from("447721232123")
+                .to("447766511332")
+                .forMinutes(20)
+                .afterGeneratingBills()
+                .expectBillOnPhoneNumber("447721232123")
+                .call(1).toNumber("447766511332").lastedInMinutes("20:00").cost("420")
+                .noOtherBillItemForThisPhoneNumber()
+                .noOtherCustomerGettingChargedAnything();
+    }
+
+}

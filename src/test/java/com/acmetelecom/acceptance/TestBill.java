@@ -9,6 +9,7 @@ public class TestBill {
     private final Customer customer;
     private final List<BillingSystem.LineItem> calls;
     private final String totalBill;
+    private boolean verified = false;
 
     public TestBill(Customer customer, List<BillingSystem.LineItem> calls, String totalBill) {
         this.customer = customer;
@@ -27,4 +28,13 @@ public class TestBill {
     public String getTotalBill() {
         return totalBill;
     }
+
+    public void setVerified(){
+        verified = true;
+    }
+
+    public boolean isVerified(){
+        return verified;
+    }
+
 }
