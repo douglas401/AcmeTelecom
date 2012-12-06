@@ -75,15 +75,9 @@ public class DurationCalculator implements IDurationCalculator {
         Duration nonPeakDuration = new Duration(start, peakStart);
         Duration nonPeakDuration2 = new Duration(peakEnd, end);
 
-        int nonPeak1 = (int)nonPeakDuration.getStandardSeconds();
-        int nonPeak2 = (int)nonPeakDuration2.getStandardSeconds();
+        int nonPeak1 = Math.max((int)nonPeakDuration.getStandardSeconds(), 0);
+        int nonPeak2 = Math.max((int)nonPeakDuration2.getStandardSeconds(), 0);
 
-        if(nonPeak1 < 0){
-            nonPeak1 = 0;
-        }
-        if(nonPeak2 < 0){
-            nonPeak2 = 0;
-        }
         Duration totalDuration = new Duration(start, end);
         return (int)totalDuration.getStandardSeconds() - nonPeak1 - nonPeak2;
     }
