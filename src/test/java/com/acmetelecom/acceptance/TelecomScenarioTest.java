@@ -68,4 +68,16 @@ public class TelecomScenarioTest {
     /*
     * Tests to determine peak/off-peak duration
     * */
-}
+
+    @Test
+    public void SingleCallAtPeakTime() {
+        telecom.whileApplicationRuns()
+                .newCallAt(StartOfPeak)
+                .from("447722113434")
+                .to("447766511332")
+                .forSeconds(20)
+                .afterGeneratingBills()
+                .expectTotalNumberOfCalls(1)
+                .expectBillOnPhoneNumber("447722113434");
+               // TODO: .expectBillWithPrice("");
+    } }

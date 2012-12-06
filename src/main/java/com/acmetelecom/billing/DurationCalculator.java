@@ -16,12 +16,7 @@ public class DurationCalculator implements IDurationCalculator {
      * Initializes the DurationCalculator with the defined PeakPeriod
      */
     public DurationCalculator(PeakPeriod peakPeriod) {
-        this.peakPeriods.add(peakPeriod);
-    }
-
-    public DurationCalculator(OvernightPeakPeriod peakPeriod) {
-        this.peakPeriods.add(peakPeriod.getMorningPeakBand());
-        this.peakPeriods.add(peakPeriod.getEveningPeakBand());
+        peakPeriods = peakPeriod.getAllPeriods();
     }
 
     /**

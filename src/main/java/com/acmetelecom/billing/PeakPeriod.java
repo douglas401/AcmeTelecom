@@ -1,5 +1,6 @@
 package com.acmetelecom.billing;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -20,13 +21,6 @@ public interface PeakPeriod {
     public abstract long getPeakPeriodSeconds();
 
     /**
-     * Check if the time is in off peak
-     * @param time the time needed to check
-     * @return true if the time is in off peak, false otherwise
-     */
-    public abstract boolean offPeak(Date time);
-
-    /**
      * Get the start time of peak period
      * @return start time of the peak period in int
      */
@@ -38,5 +32,9 @@ public interface PeakPeriod {
      */
     public abstract int getPeakPeriodEnd();
 
-
+    /**
+     * Get the end time of peak period
+     * @return end time of the peak period in int
+     */
+    ArrayList<PeakPeriod> getAllPeriods();
 }

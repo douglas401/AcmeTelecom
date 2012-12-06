@@ -1,5 +1,6 @@
 package com.acmetelecom.billing;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -22,7 +23,19 @@ public class SinglePeakPeriod implements PeakPeriod {
 		return end;
 	}
 
-	public SinglePeakPeriod(){
+    @Override
+    public ArrayList<PeakPeriod> getAllPeriods() {
+        ArrayList<PeakPeriod> result = new ArrayList<PeakPeriod>();
+        if(start <= end){
+            result.add(this);
+        }else{
+            result.add(new SinglePeakPeriod(0,end));
+            result.add(new SinglePeakPeriod(start,24));
+        }
+        return result;
+    }
+
+    public SinglePeakPeriod(){
         start = 7;
         end = 19;
 	}
@@ -39,16 +52,6 @@ public class SinglePeakPeriod implements PeakPeriod {
 	public long getPeakPeriodSeconds(){
 		return getPeakPeriodHours() * 60 * 60;
 	}
-	
-    public boolean offPeak(Date time) {
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(time);
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        if (start < end) { 
-        	return hour < start || hour >= end;
-        } else {
-        	return hour < start && hour >= end;
-        }
-    }
+
 
 }
