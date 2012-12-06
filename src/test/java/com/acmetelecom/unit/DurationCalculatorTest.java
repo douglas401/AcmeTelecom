@@ -167,5 +167,15 @@ public class DurationCalculatorTest {
     	int peakDuration = dC.getPeakDurationSeconds(startTime, endTime);
     	assertEquals(4*60*60, peakDuration);
     }
+
+    @Test
+    // Test peak duration through a day with new setting of peak period from 9pm - 6am
+    public void testMultiplePeakCall() {
+        IDurationCalculator dC = new DurationCalculator(new SinglePeakPeriod(9,12), new SinglePeakPeriod(16, 21));
+        DateTime startTime = new DateTime(2012, 11, 1, 6, 0, 0);
+        DateTime endTime = new DateTime(2012, 11, 1, 22, 0, 0);
+        int peakDuration = dC.getPeakDurationSeconds(startTime, endTime);
+        assertEquals(8*60*60, peakDuration);
+    }
      
 }
