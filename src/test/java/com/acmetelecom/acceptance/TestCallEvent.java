@@ -1,11 +1,13 @@
 package com.acmetelecom.acceptance;
 // TODO: Add javadoc into this class
 
+import com.acmetelecom.calling.CallInformation;
+
 public class TestCallEvent {
 
     private TelecomTestContext parent;
-    private String caller;
-    private String callee;
+    private CallInformation caller;
+    private CallInformation callee;
     private long startTime;
     private long finishTime;
 
@@ -15,11 +17,11 @@ public class TestCallEvent {
     }
 
     public String getCaller() {
-        return caller;
+        return caller.getNumber();
     }
 
     public String getCallee() {
-        return callee;
+        return callee.getNumber();
     }
 
     public long getStartTime() {
@@ -31,12 +33,12 @@ public class TestCallEvent {
     }
 
     public TestCallEvent from(String caller){
-        this.caller = caller;
+        this.caller = new CallInformation(caller);
         return this;
     }
 
     public TestCallEvent to(String callee){
-        this.callee = callee;
+        this.callee = new CallInformation(callee);
         return this;
     }
 
