@@ -2,8 +2,6 @@ package com.acmetelecom.billing;
 
 import java.util.ArrayList;
 
-// TODO: CHANGE THIS CLASS TO ONLY USE JODADATETIME... SHOULD NOT BE LIMITED TO ONLY HOURS..
-
 /**
  * @see PeakPeriod
  *

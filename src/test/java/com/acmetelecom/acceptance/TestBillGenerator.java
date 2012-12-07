@@ -6,7 +6,6 @@ import com.acmetelecom.customer.Customer;
 
 import java.util.ArrayList;
 import java.util.List;
-// TODO: Add javadoc into this class
 
 public class TestBillGenerator implements IBillGenerator {
     private List<TestBill> bills = new ArrayList<TestBill>();

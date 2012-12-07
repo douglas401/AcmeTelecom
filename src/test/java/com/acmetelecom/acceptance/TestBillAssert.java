@@ -7,7 +7,6 @@ import org.junit.internal.matchers.TypeSafeMatcher;
 import java.util.List;
 
 import static org.junit.Assert.*;
-// TODO: Add javadoc into this class
 
 public class TestBillAssert {
 

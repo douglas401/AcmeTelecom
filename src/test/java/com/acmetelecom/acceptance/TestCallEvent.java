@@ -1,5 +1,4 @@
 package com.acmetelecom.acceptance;
-// TODO: Add javadoc into this class
 
 import com.acmetelecom.calling.CallInformation;
 

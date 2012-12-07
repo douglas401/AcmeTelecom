@@ -20,7 +20,6 @@ public abstract class CallEvent {
         this.time = timeStamp;
     }
 
-    // TODO: Consider which stage of the code do we use getNumber()
     /**
      * Get the caller
      * @return caller
