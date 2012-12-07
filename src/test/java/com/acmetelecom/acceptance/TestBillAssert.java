@@ -1,6 +1,5 @@
 package com.acmetelecom.acceptance;
 
-import com.acmetelecom.billing.BillingSystem;
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.junit.internal.matchers.TypeSafeMatcher;
@@ -30,6 +29,15 @@ public class TestBillAssert {
     public TestBillAssertIndividual expectBillOnPhoneNumber(String number) {
         assertThat(bills, HasBilledForCaller(number));
         return new TestBillAssertIndividual(this, number);
+    }
+
+    public void noOtherCustomerGettingChargedAnything() {
+        for(TestBill each : bills ){
+            if(! each.isVerified() ){
+                assertEquals(each.getCalls().size(),0);
+            }
+        }
+
     }
 
     private Matcher<List<TestBill>> HasBilledForCaller(final String number) {
@@ -68,15 +76,6 @@ public class TestBillAssert {
             }
         }
         return caller;
-    }
-
-    public void noOtherCustomerGettingChargedAnything() {
-        for(TestBill each : bills ){
-            if(! each.isVerified() ){
-                assertEquals(each.getCalls().size(),0);
-            }
-        }
-
     }
 
     public class TestBillAssertIndividual{

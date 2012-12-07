@@ -28,8 +28,8 @@ public class BillingSystem {
      * Initialises the BillingSystem with default BillGenerator
      */
     public BillingSystem(){
-        durationCalculator = new DurationCalculator(new SinglePeakPeriod());
         billGenerator = new BillGenerator();
+        durationCalculator = new DurationCalculator(new SinglePeakPeriod());
     }
 
     /**
