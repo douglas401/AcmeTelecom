@@ -4,6 +4,7 @@ import com.acmetelecom.billing.BillingSystem;
 import com.acmetelecom.customer.Customer;
 
 import java.util.List;
+// TODO: Add javadoc into this class
 
 public class TestBill {
     private final Customer customer;

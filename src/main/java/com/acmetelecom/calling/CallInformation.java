@@ -1,5 +1,7 @@
 package com.acmetelecom.calling;
 
+// TODO: Add javadoc into this class
+
 public class CallInformation
 {
     private String number;

@@ -3,6 +3,7 @@ package com.acmetelecom.acceptance;
 import com.acmetelecom.billing.BillingSystem;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeUtils;
+// TODO: Add javadoc into this class
 
 public class TelecomTestContext {
 	private BillingSystem billingSystem;
