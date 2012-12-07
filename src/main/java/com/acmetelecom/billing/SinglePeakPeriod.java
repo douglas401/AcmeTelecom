@@ -21,7 +21,6 @@ public class SinglePeakPeriod implements PeakPeriod {
 		return end;
 	}
 
-    @Override
     public ArrayList<PeakPeriod> getAllPeriods() {
         ArrayList<PeakPeriod> result = new ArrayList<PeakPeriod>();
         if(start <= end){

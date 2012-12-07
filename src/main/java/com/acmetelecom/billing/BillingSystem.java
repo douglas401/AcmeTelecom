@@ -17,31 +17,30 @@ import java.util.Map;
 
 public class BillingSystem {
 
-    private IDurationCalculator durationCalculator;        
+    private ICallCostCalculator callCostCalc;        
     // a map of caller's phone number as key and a list of call events as value
     private Map<String, List<CallEvent>> callLogMap = new HashMap<String, List<CallEvent>>();
     private IBillGenerator billGenerator;
     private CustomerDatabase customerDatabase = CentralCustomerDatabase.getInstance();
-    private TariffLibrary tariffDatabase = CentralTariffDatabase.getInstance();
 
     /**
-     * Initialises the BillingSystem with default BillGenerator
+     * Initializes the BillingSystem with default BillGenerator
      */
     public BillingSystem(){
+        callCostCalc = new CallCostCalculator(new SinglePeakPeriod());
         billGenerator = new BillGenerator();
-        durationCalculator = new DurationCalculator(new SinglePeakPeriod());
     }
 
     /**
-     * Initialises the BillingSystem with the custom BillGenerator
+     * Initializes the BillingSystem with the custom BillGenerator
      */
     public BillingSystem(IBillGenerator billGenerator) {
         this.billGenerator = billGenerator;
-        this.durationCalculator = new DurationCalculator(new SinglePeakPeriod());
+        this.callCostCalc = new CallCostCalculator(new SinglePeakPeriod());
     }
 
     /**
-     * Initialises a call with caller and callee
+     * Initializes a call with caller and callee
      * @param caller caller in String
      * @param callee callee in String
      */
@@ -107,26 +106,8 @@ public class BillingSystem {
         List<LineItem> items = new ArrayList<LineItem>();
 
         for (Call call : calls) {
-
-            Tariff tariff = tariffDatabase.tarriffFor(customer);
-
-            BigDecimal cost;
-
-            /*
-            * New billing regulation
-            *
-            * durationCalculator.getPeakDuration(call.StartTime(),call.endTime()) = peakDuration
-            * OffPeakDuration = call.Duration - peakDuration
-            *
-            *        offpeakCost = new BigDecimal(offpeakDuration.multiply(tariff.offPeakRate());
-            *        peakCost    = new BigDecimal(peakDuration.multiply(tariff.peakRate());
-            *
-            * cost = offpeakCost + peakCost;
-            * */
-            int peakDurationSeconds = durationCalculator.getPeakDurationSeconds(new DateTime(call.startTime()), new DateTime(call.endTime()));
-            int offPeakDurationSeconds = call.durationSeconds() - peakDurationSeconds;
-            cost = new BigDecimal(peakDurationSeconds).multiply(tariff.peakRate()).add(new BigDecimal(offPeakDurationSeconds).multiply(tariff.offPeakRate()));
-
+        	
+            BigDecimal cost = callCostCalc.getCallCost(new DateTime(call.startTime()), new DateTime(call.endTime()), customer);
             cost = cost.setScale(0, RoundingMode.HALF_UP);
             BigDecimal callCost = cost;
             totalBill = totalBill.add(callCost);
