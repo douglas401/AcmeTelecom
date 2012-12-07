@@ -113,7 +113,9 @@ public class BillingSystem {
             BigDecimal cost;
 
             /*
-            * Utils.getPeakDuration(call.StartTime(),call.endTime())  = peakDuration
+            * New billing regulation
+            *
+            * durationCalculator.getPeakDuration(call.StartTime(),call.endTime()) = peakDuration
             * OffPeakDuration = call.Duration - peakDuration
             *
             *        offpeakCost = new BigDecimal(offpeakDuration.multiply(tariff.offPeakRate());
