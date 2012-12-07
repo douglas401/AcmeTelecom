@@ -4,8 +4,8 @@ package com.acmetelecom.calling;
  * Represents a call event with caller, callee and the time when the call happens
  */
 public abstract class CallEvent {
-    private String caller;
-    private String callee;
+    private CallInformation caller;
+    private CallInformation callee;
     private long time;
 
     /**
@@ -15,17 +15,18 @@ public abstract class CallEvent {
      * @param timeStamp The time when the CallEvent happens in long
      */
     public CallEvent(String caller, String callee, long timeStamp) {
-        this.caller = caller;
-        this.callee = callee;
+        this.caller = new CallInformation(caller);
+        this.callee = new CallInformation(callee);
         this.time = timeStamp;
     }
 
+    // TODO: Consider which stage of the code do we use getNumber()
     /**
      * Get the caller
      * @return caller
      */
     public String getCaller() {
-        return caller;
+        return caller.getNumber();
     }
 
     /**
@@ -33,7 +34,7 @@ public abstract class CallEvent {
      * @return callee
      */
     public String getCallee() {
-        return callee;
+        return callee.getNumber();
     }
 
     /**
